@@ -1,0 +1,106 @@
+﻿{
+   "CodeGenerationMode": 4,
+   "ContextClassName": "condSecurityContext",
+   "ContextNamespace": null,
+   "DefaultDacpacSchema": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": true,
+   "ModelNamespace": null,
+   "OutputContextPath": null,
+   "OutputPath": "Models",
+   "PreserveCasingWithRegex": true,
+   "ProjectRootNamespace": "APICondSecurity",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 2,
+   "SelectedToBeGenerated": 0,
+   "T4TemplatePath": null,
+   "Tables": [
+      {
+         "Name": "public.cameras",
+         "ObjectType": 0
+      },
+      {
+         "Name": "public.cidade",
+         "ObjectType": 0
+      },
+      {
+         "Name": "public.condominio",
+         "ObjectType": 0
+      },
+      {
+         "Name": "public.endereco",
+         "ObjectType": 0
+      },
+      {
+         "Name": "public.notificacao",
+         "ObjectType": 0
+      },
+      {
+         "Name": "public.permissao",
+         "ObjectType": 0
+      },
+      {
+         "Name": "public.portao",
+         "ObjectType": 0
+      },
+      {
+         "Name": "public.registros",
+         "ObjectType": 0
+      },
+      {
+         "Name": "public.residencia",
+         "ObjectType": 0
+      },
+      {
+         "Name": "public.RFID",
+         "ObjectType": 0
+      },
+      {
+         "Name": "public.tipo_usuario",
+         "ObjectType": 0
+      },
+      {
+         "Name": "public.uf",
+         "ObjectType": 0
+      },
+      {
+         "Name": "public.usuario",
+         "ObjectType": 0
+      },
+      {
+         "Name": "public.veiculo",
+         "ObjectType": 0
+      },
+      {
+         "Name": "public.veiculo_terceiro",
+         "ObjectType": 0
+      },
+      {
+         "Name": "public.veiculo_usuario",
+         "ObjectType": 0
+      }
+   ],
+   "UiHint": ".cond-security",
+   "UncountableWords": null,
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": false,
+   "UseDateOnlyTimeOnly": true,
+   "UseDbContextSplitting": false,
+   "UseDecimalDataAnnotationForSprocResult": true,
+   "UseFluentApiOnly": false,
+   "UseHandleBars": false,
+   "UseHierarchyId": false,
+   "UseInflector": false,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoNavigations": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UsePrefixNavigationNaming": false,
+   "UseSchemaFolders": false,
+   "UseSchemaNamespaces": false,
+   "UseSpatial": false,
+   "UseT4": false
+}
