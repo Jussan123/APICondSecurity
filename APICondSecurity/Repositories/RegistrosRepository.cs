@@ -6,26 +6,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace APICondSecurity.Repositories
 {
-    public class CameraRepository : ICamera
+    public class RegistrosRepository : IRegistros
     {
         private readonly condSecurityContext _context;
 
-        public CameraRepository(condSecurityContext context)
+        public RegistrosRepository(condSecurityContext context)
         {
             _context = context;
         }
 
-        public void Alterar(Cameras camera)
+        public void Alterar(Registros registros)
         {
 
-            _context.Entry(camera).State = EntityState.Modified;
+            _context.Entry(registros).State = EntityState.Modified;
         }
 
-        public void Excluir(Cameras camera)
+        public void Excluir(Registros registros)
         {
             try
             {
-                _context.Cameras.Remove(camera);
+                _context.Registros.Remove(registros);
             } 
             catch (Exception ex)
             {
@@ -34,11 +34,11 @@ namespace APICondSecurity.Repositories
             }
         }
 
-        public void Incluir(Cameras camera)
+        public void Incluir(Registros registros)
         {
             try
             {
-                _context.Cameras.Add(camera);
+                _context.Registros.Add(registros);
                 _context.SaveChanges();
             }
             catch (Exception ex) 
@@ -62,25 +62,25 @@ namespace APICondSecurity.Repositories
             }
         }
 
-        public async Task<Cameras> Get(int IdCamera)
+        public async Task<Registros> Get(int IdRegistros)
         {
             try
             {
-                return await _context.Cameras.FirstOrDefaultAsync(c => c.IdCamera == IdCamera);
+                return await _context.Registros.FirstOrDefaultAsync(c => c.IdRegistros == IdRegistros);
             }
             catch (Exception ex) 
             {
                 Console.WriteLine(ex.Message);
-                Console.WriteLine($"Erro ao buscar camera: {ex.Message}");
+                Console.WriteLine($"Erro ao buscar registros: {ex.Message}");
                 throw;
             }
         }
 
-        public async Task<IEnumerable<Cameras>> GetAll()
+        public async Task<IEnumerable<Registros>> GetAll()
         {
             try
             {
-                return await _context.Cameras.ToListAsync();
+                return await _context.Registros.ToListAsync();
             }
             catch (Exception ex) 
             {

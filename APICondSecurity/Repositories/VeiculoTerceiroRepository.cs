@@ -6,26 +6,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace APICondSecurity.Repositories
 {
-    public class CameraRepository : ICamera
+    public class VeiculoTerceiroRepository : IVeiculoTerceiro
     {
         private readonly condSecurityContext _context;
 
-        public CameraRepository(condSecurityContext context)
+        public VeiculoTerceiroRepository(condSecurityContext context)
         {
             _context = context;
         }
 
-        public void Alterar(Cameras camera)
+        public void Alterar(VeiculoTerceiro veiculoTerceiro)
         {
 
-            _context.Entry(camera).State = EntityState.Modified;
+            _context.Entry(veiculoTerceiro).State = EntityState.Modified;
         }
 
-        public void Excluir(Cameras camera)
+        public void Excluir(VeiculoTerceiro veiculoTerceiro)
         {
             try
             {
-                _context.Cameras.Remove(camera);
+                _context.VeiculoTerceiro.Remove(veiculoTerceiro);
             } 
             catch (Exception ex)
             {
@@ -34,11 +34,11 @@ namespace APICondSecurity.Repositories
             }
         }
 
-        public void Incluir(Cameras camera)
+        public void Incluir(VeiculoTerceiro veiculoTerceiro)
         {
             try
             {
-                _context.Cameras.Add(camera);
+                _context.VeiculoTerceiro.Add(veiculoTerceiro);
                 _context.SaveChanges();
             }
             catch (Exception ex) 
@@ -62,25 +62,25 @@ namespace APICondSecurity.Repositories
             }
         }
 
-        public async Task<Cameras> Get(int IdCamera)
+        public async Task<VeiculoTerceiro> Get(int IdVeiculoTerceiro)
         {
             try
             {
-                return await _context.Cameras.FirstOrDefaultAsync(c => c.IdCamera == IdCamera);
+                return await _context.VeiculoTerceiro.FirstOrDefaultAsync(c => c.IdVeiculoTerceiro == IdVeiculoTerceiro);
             }
             catch (Exception ex) 
             {
                 Console.WriteLine(ex.Message);
-                Console.WriteLine($"Erro ao buscar camera: {ex.Message}");
+                Console.WriteLine($"Erro ao buscar veiculoTerceiro: {ex.Message}");
                 throw;
             }
         }
 
-        public async Task<IEnumerable<Cameras>> GetAll()
+        public async Task<IEnumerable<VeiculoTerceiro>> GetAll()
         {
             try
             {
-                return await _context.Cameras.ToListAsync();
+                return await _context.VeiculoTerceiro.ToListAsync();
             }
             catch (Exception ex) 
             {

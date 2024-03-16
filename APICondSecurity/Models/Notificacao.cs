@@ -12,8 +12,8 @@ namespace APICondSecurity.Models;
 public partial class Notificacao
 {
     [Key]
-    [Column("id_notificao")]
-    public int IdNotificao { get; set; }
+    [Column("id_notificacao")]
+    public int IdNotificacao { get; set; }
 
     [Column("mensagem")]
     public string Mensagem { get; set; }

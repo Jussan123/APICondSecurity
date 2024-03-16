@@ -10,7 +10,7 @@ namespace APICondSecurity.Interfaces
     {
         void Incluir(Cameras camera);
         void Alterar(Cameras camera);
-        void Excluir(int id);
+        void Excluir(Cameras camera);
         Task<Cameras> Get(int id);
         Task<IEnumerable<Cameras>> GetAll();
         Task<bool> SaveAllAsync();
