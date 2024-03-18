@@ -6,26 +6,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace APICondSecurity.Repositories
 {
-    public class CameraRepository : ICamera
+    public class CidadeRepository : ICidade
     {
         private readonly condSecurityContext _context;
 
-        public CameraRepository(condSecurityContext context)
+        public CidadeRepository(condSecurityContext context)
         {
             _context = context;
         }
 
-        public void Alterar(Cameras camera)
+        public void Alterar(Cidade cidade)
         {
 
-            _context.Entry(camera).State = EntityState.Modified;
+            _context.Entry(cidade).State = EntityState.Modified;
         }
 
-        public void Excluir(Cameras camera)
+        public void Excluir(Cidade cidade)
         {
             try
             {
-                _context.Cameras.Remove(camera);
+                _context.Cidade.Remove(cidade);
             } 
             catch (Exception ex)
             {
@@ -34,11 +34,11 @@ namespace APICondSecurity.Repositories
             }
         }
 
-        public void Incluir(Cameras camera)
+        public void Incluir(Cidade cidade)
         {
             try
             {
-                _context.Cameras.Add(camera);
+                _context.Cidade.Add(cidade);
                 _context.SaveChanges();
             }
             catch (Exception ex) 
@@ -62,25 +62,25 @@ namespace APICondSecurity.Repositories
             }
         }
 
-        public async Task<Cameras> Get(int IdCamera)
+        public async Task<Cidade> Get(int IdCidade)
         {
             try
             {
-                return await _context.Cameras.FirstOrDefaultAsync(c => c.IdCamera == IdCamera);
+                return await _context.Cidade.FirstOrDefaultAsync(c => c.IdCidade == IdCidade);
             }
             catch (Exception ex) 
             {
                 Console.WriteLine(ex.Message);
-                Console.WriteLine($"Erro ao buscar camera: {ex.Message}");
+                Console.WriteLine($"Erro ao buscar cidade: {ex.Message}");
                 throw;
             }
         }
 
-        public async Task<IEnumerable<Cameras>> GetAll()
+        public async Task<IEnumerable<Cidade>> GetAll()
         {
             try
             {
-                return await _context.Cameras.ToListAsync();
+                return await _context.Cidade.ToListAsync();
             }
             catch (Exception ex) 
             {

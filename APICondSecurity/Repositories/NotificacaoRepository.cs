@@ -6,26 +6,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace APICondSecurity.Repositories
 {
-    public class CameraRepository : ICamera
+    public class NotificacaoRepository : INotificacao
     {
         private readonly condSecurityContext _context;
 
-        public CameraRepository(condSecurityContext context)
+        public NotificacaoRepository(condSecurityContext context)
         {
             _context = context;
         }
 
-        public void Alterar(Cameras camera)
+        public void Alterar(Notificacao notificacao)
         {
 
-            _context.Entry(camera).State = EntityState.Modified;
+            _context.Entry(notificacao).State = EntityState.Modified;
         }
 
-        public void Excluir(Cameras camera)
+        public void Excluir(Notificacao notificacao)
         {
             try
             {
-                _context.Cameras.Remove(camera);
+                _context.Notificacao.Remove(notificacao);
             } 
             catch (Exception ex)
             {
@@ -34,11 +34,11 @@ namespace APICondSecurity.Repositories
             }
         }
 
-        public void Incluir(Cameras camera)
+        public void Incluir(Notificacao notificacao)
         {
             try
             {
-                _context.Cameras.Add(camera);
+                _context.Notificacao.Add(notificacao);
                 _context.SaveChanges();
             }
             catch (Exception ex) 
@@ -62,25 +62,25 @@ namespace APICondSecurity.Repositories
             }
         }
 
-        public async Task<Cameras> Get(int IdCamera)
+        public async Task<Notificacao> Get(int IdNotificacao)
         {
             try
             {
-                return await _context.Cameras.FirstOrDefaultAsync(c => c.IdCamera == IdCamera);
+                return await _context.Notificacao.FirstOrDefaultAsync(c => c.IdNotificacao == IdNotificacao);
             }
             catch (Exception ex) 
             {
                 Console.WriteLine(ex.Message);
-                Console.WriteLine($"Erro ao buscar camera: {ex.Message}");
+                Console.WriteLine($"Erro ao buscar notificacao: {ex.Message}");
                 throw;
             }
         }
 
-        public async Task<IEnumerable<Cameras>> GetAll()
+        public async Task<IEnumerable<Notificacao>> GetAll()
         {
             try
             {
-                return await _context.Cameras.ToListAsync();
+                return await _context.Notificacao.ToListAsync();
             }
             catch (Exception ex) 
             {

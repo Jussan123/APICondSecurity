@@ -6,26 +6,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace APICondSecurity.Repositories
 {
-    public class CameraRepository : ICamera
+    public class UsuarioRepository : IUsuario
     {
         private readonly condSecurityContext _context;
 
-        public CameraRepository(condSecurityContext context)
+        public UsuarioRepository(condSecurityContext context)
         {
             _context = context;
         }
 
-        public void Alterar(Cameras camera)
+        public void Alterar(Usuario usuario)
         {
 
-            _context.Entry(camera).State = EntityState.Modified;
+            _context.Entry(usuario).State = EntityState.Modified;
         }
 
-        public void Excluir(Cameras camera)
+        public void Excluir(Usuario usuario)
         {
             try
             {
-                _context.Cameras.Remove(camera);
+                _context.Usuario.Remove(usuario);
             } 
             catch (Exception ex)
             {
@@ -34,11 +34,11 @@ namespace APICondSecurity.Repositories
             }
         }
 
-        public void Incluir(Cameras camera)
+        public void Incluir(Usuario usuario)
         {
             try
             {
-                _context.Cameras.Add(camera);
+                _context.Usuario.Add(usuario);
                 _context.SaveChanges();
             }
             catch (Exception ex) 
@@ -62,25 +62,25 @@ namespace APICondSecurity.Repositories
             }
         }
 
-        public async Task<Cameras> Get(int IdCamera)
+        public async Task<Usuario> Get(int IdUsuario)
         {
             try
             {
-                return await _context.Cameras.FirstOrDefaultAsync(c => c.IdCamera == IdCamera);
+                return await _context.Usuario.FirstOrDefaultAsync(c => c.IdUsuario == IdUsuario);
             }
             catch (Exception ex) 
             {
                 Console.WriteLine(ex.Message);
-                Console.WriteLine($"Erro ao buscar camera: {ex.Message}");
+                Console.WriteLine($"Erro ao buscar usuario: {ex.Message}");
                 throw;
             }
         }
 
-        public async Task<IEnumerable<Cameras>> GetAll()
+        public async Task<IEnumerable<Usuario>> GetAll()
         {
             try
             {
-                return await _context.Cameras.ToListAsync();
+                return await _context.Usuario.ToListAsync();
             }
             catch (Exception ex) 
             {

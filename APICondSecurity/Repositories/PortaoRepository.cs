@@ -6,26 +6,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace APICondSecurity.Repositories
 {
-    public class CameraRepository : ICamera
+    public class PortaoRepository : IPortao
     {
         private readonly condSecurityContext _context;
 
-        public CameraRepository(condSecurityContext context)
+        public PortaoRepository(condSecurityContext context)
         {
             _context = context;
         }
 
-        public void Alterar(Cameras camera)
+        public void Alterar(Portao portao)
         {
 
-            _context.Entry(camera).State = EntityState.Modified;
+            _context.Entry(portao).State = EntityState.Modified;
         }
 
-        public void Excluir(Cameras camera)
+        public void Excluir(Portao portao)
         {
             try
             {
-                _context.Cameras.Remove(camera);
+                _context.Portao.Remove(portao);
             } 
             catch (Exception ex)
             {
@@ -34,11 +34,11 @@ namespace APICondSecurity.Repositories
             }
         }
 
-        public void Incluir(Cameras camera)
+        public void Incluir(Portao portao)
         {
             try
             {
-                _context.Cameras.Add(camera);
+                _context.Portao.Add(portao);
                 _context.SaveChanges();
             }
             catch (Exception ex) 
@@ -62,25 +62,25 @@ namespace APICondSecurity.Repositories
             }
         }
 
-        public async Task<Cameras> Get(int IdCamera)
+        public async Task<Portao> Get(int IdPortao)
         {
             try
             {
-                return await _context.Cameras.FirstOrDefaultAsync(c => c.IdCamera == IdCamera);
+                return await _context.Portao.FirstOrDefaultAsync(c => c.IdPortao == IdPortao);
             }
             catch (Exception ex) 
             {
                 Console.WriteLine(ex.Message);
-                Console.WriteLine($"Erro ao buscar camera: {ex.Message}");
+                Console.WriteLine($"Erro ao buscar portao: {ex.Message}");
                 throw;
             }
         }
 
-        public async Task<IEnumerable<Cameras>> GetAll()
+        public async Task<IEnumerable<Portao>> GetAll()
         {
             try
             {
-                return await _context.Cameras.ToListAsync();
+                return await _context.Portao.ToListAsync();
             }
             catch (Exception ex) 
             {

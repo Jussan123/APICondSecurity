@@ -91,7 +91,7 @@ public partial class condSecurityContext : DbContext
 
         modelBuilder.Entity<Notificacao>(entity =>
         {
-            entity.HasKey(e => e.IdNotificao).HasName("notificacao_pkey");
+            entity.HasKey(e => e.IdNotificacao).HasName("notificacao_pkey");
 
             entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.Notificacao)
                 .OnDelete(DeleteBehavior.ClientSetNull)

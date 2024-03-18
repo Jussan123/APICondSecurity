@@ -6,26 +6,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace APICondSecurity.Repositories
 {
-    public class CameraRepository : ICamera
+    public class TipoUsuarioRepository : ITipoUsuario
     {
         private readonly condSecurityContext _context;
 
-        public CameraRepository(condSecurityContext context)
+        public TipoUsuarioRepository(condSecurityContext context)
         {
             _context = context;
         }
 
-        public void Alterar(Cameras camera)
+        public void Alterar(TipoUsuario tipoUsuario)
         {
 
-            _context.Entry(camera).State = EntityState.Modified;
+            _context.Entry(tipoUsuario).State = EntityState.Modified;
         }
 
-        public void Excluir(Cameras camera)
+        public void Excluir(TipoUsuario tipoUsuario)
         {
             try
             {
-                _context.Cameras.Remove(camera);
+                _context.TipoUsuario.Remove(tipoUsuario);
             } 
             catch (Exception ex)
             {
@@ -34,11 +34,11 @@ namespace APICondSecurity.Repositories
             }
         }
 
-        public void Incluir(Cameras camera)
+        public void Incluir(TipoUsuario tipoUsuario)
         {
             try
             {
-                _context.Cameras.Add(camera);
+                _context.TipoUsuario.Add(tipoUsuario);
                 _context.SaveChanges();
             }
             catch (Exception ex) 
@@ -62,25 +62,25 @@ namespace APICondSecurity.Repositories
             }
         }
 
-        public async Task<Cameras> Get(int IdCamera)
+        public async Task<TipoUsuario> Get(int IdTipoUsuario)
         {
             try
             {
-                return await _context.Cameras.FirstOrDefaultAsync(c => c.IdCamera == IdCamera);
+                return await _context.TipoUsuario.FirstOrDefaultAsync(c => c.IdTipoUsuario == IdTipoUsuario);
             }
             catch (Exception ex) 
             {
                 Console.WriteLine(ex.Message);
-                Console.WriteLine($"Erro ao buscar camera: {ex.Message}");
+                Console.WriteLine($"Erro ao buscar tipoUsuario: {ex.Message}");
                 throw;
             }
         }
 
-        public async Task<IEnumerable<Cameras>> GetAll()
+        public async Task<IEnumerable<TipoUsuario>> GetAll()
         {
             try
             {
-                return await _context.Cameras.ToListAsync();
+                return await _context.TipoUsuario.ToListAsync();
             }
             catch (Exception ex) 
             {

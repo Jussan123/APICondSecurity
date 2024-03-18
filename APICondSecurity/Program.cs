@@ -20,7 +20,21 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<ICamera, CameraRepository>();
+builder.Services.AddScoped<CameraRepository>();
+builder.Services.AddScoped<CidadeRepository>();
+builder.Services.AddScoped<CondominioRepository>();
+builder.Services.AddScoped<EnderecoRepository>();
+builder.Services.AddScoped<NotificacaoRepository>();
+builder.Services.AddScoped<PermissaoRepository>();
+builder.Services.AddScoped<PortaoRepository>();
+builder.Services.AddScoped<RegistrosRepository>();
+builder.Services.AddScoped<ResidenciaRepository>();
+builder.Services.AddScoped<RfidRepository>();
+builder.Services.AddScoped<TipoUsuarioRepository>();
+builder.Services.AddScoped<UsuarioRepository>();
+builder.Services.AddScoped<VeiculoRepository>();
+builder.Services.AddScoped<VeiculoTerceiroRepository>();
+builder.Services.AddScoped<VeiculoUsuarioRepository>();
 
 var app = builder.Build();
 
