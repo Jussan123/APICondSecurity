@@ -16,6 +16,7 @@ namespace APICondSecurity.Controllers
             _cidadeRepository = cidadeRepository;
         }
 
+
         [HttpPost("Cadastrar")]
         public async Task<ActionResult> CadastrarCidade(Cidade cidade)
         {
@@ -51,6 +52,7 @@ namespace APICondSecurity.Controllers
         {
             var cidade = _cidadeRepository.Get(IdCidade);
             if (cidade == null)
+
             {
                 return NotFound("Id da cidade não encontrado.");
             }
