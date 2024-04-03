@@ -1,4 +1,5 @@
-﻿using APICondSecurity.Interfaces;
+﻿using APICondSecurity.DTOs;
+using APICondSecurity.Interfaces;
 using APICondSecurity.Models;
 using APICondSecurity.Repositories;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -74,7 +75,12 @@ namespace APICondSecurity.Controllers
             {
                 return NotFound("Veiculo Não encontrada para o Id informado.");
             }
-            return Ok(veiculo);
+            VeiculoDTO veiculoDTO = new VeiculoDTO
+            {
+
+
+            }
+            return Ok(veiculoDTO);
         }
 
         [HttpGet("GetAll")]

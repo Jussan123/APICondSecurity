@@ -18,7 +18,7 @@ public partial class Veiculo
 
     [Key]
     [Column("placa")]
-    [StringLength(7)]
+    [StringLength(255)]
     public string Placa { get; set; }
 
     [Required]
@@ -38,6 +38,10 @@ public partial class Veiculo
 
     [Column("ano")]
     public int Ano { get; set; }
+
+    [Column("situacao")]
+    [StringLength(2)]
+    public string Situacao { get; set;}
 
     [Column("id_condominio")]
     public int IdCondominio { get; set; }

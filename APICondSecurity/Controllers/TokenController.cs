@@ -8,10 +8,10 @@ namespace APICondSecurity.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CamerasController : Controller
+    public class TokenController : Controller
     {
         private readonly CameraRepository _cameraRepository;
-        public CamerasController(CameraRepository cameraRepository)
+        public TokenController(CameraRepository cameraRepository)
         {
             _cameraRepository = cameraRepository;
         }

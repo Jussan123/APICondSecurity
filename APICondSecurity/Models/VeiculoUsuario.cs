@@ -17,7 +17,7 @@ public partial class VeiculoUsuario
 
     [Required]
     [Column("placa")]
-    [StringLength(7)]
+    [StringLength(255)]
     public string Placa { get; set; }
 
     [Column("id_usuario")]

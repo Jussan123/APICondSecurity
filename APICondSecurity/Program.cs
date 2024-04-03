@@ -1,4 +1,5 @@
 using APICondSecurity.Interfaces;
+using APICondSecurity.Mappings;
 using APICondSecurity.Models;
 using APICondSecurity.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +34,8 @@ builder.Services.AddScoped<RfidRepository>();
 builder.Services.AddScoped<TipoUsuarioRepository>();
 builder.Services.AddScoped<UsuarioRepository>();
 builder.Services.AddScoped<VeiculoRepository>();
-builder.Services.AddScoped<VeiculoTerceiroRepository>();
+//Adicionar AutoMapper para o veiculo
+builder.Services.AddAutoMapper(typeof(EntitiesToDTOMappingProfile));
 builder.Services.AddScoped<VeiculoUsuarioRepository>();
 
 var app = builder.Build();
