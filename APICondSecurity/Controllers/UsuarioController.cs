@@ -1,6 +1,8 @@
-﻿using APICondSecurity.Interfaces;
+﻿using APICondSecurity.DTOs;
+using APICondSecurity.Interfaces;
 using APICondSecurity.Models;
 using APICondSecurity.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,8 +13,10 @@ namespace APICondSecurity.Controllers
     public class UsuarioController : Controller
     {
         private readonly UsuarioRepository _usuarioRepository;
-        public UsuarioController(UsuarioRepository usuarioRepository)
+        private readonly IMapper _mapper;
+        public UsuarioController(UsuarioRepository usuarioRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _usuarioRepository = usuarioRepository;
         }
 
@@ -74,7 +78,8 @@ namespace APICondSecurity.Controllers
             {
                 return NotFound("Usuario Não encontrada para o Id informado.");
             }
-            return Ok(usuario);
+            var usuarioDTO = _mapper.Map<UsuarioDTO>(usuario);
+            return Ok(usuarioDTO);
         }
 
         [HttpGet("GetAll")]

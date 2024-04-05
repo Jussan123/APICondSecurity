@@ -1,6 +1,8 @@
-﻿using APICondSecurity.Interfaces;
+﻿using APICondSecurity.DTOs;
+using APICondSecurity.Interfaces;
 using APICondSecurity.Models;
 using APICondSecurity.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,8 +13,10 @@ namespace APICondSecurity.Controllers
     public class EnderecoController : Controller
     {
         private readonly EnderecoRepository _enderecoRepository;
-        public EnderecoController(EnderecoRepository enderecoRepository)
+        private readonly IMapper _mapper;
+        public EnderecoController(EnderecoRepository enderecoRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _enderecoRepository = enderecoRepository;
         }
 
@@ -74,7 +78,8 @@ namespace APICondSecurity.Controllers
             {
                 return NotFound("Endereco Não encontrada para o Id informado.");
             }
-            return Ok(endereco);
+            var enderecoDTO = _mapper.Map<EnderecoDTO>(endereco);
+            return Ok(enderecoDTO);
         }
 
         [HttpGet("GetAll")]

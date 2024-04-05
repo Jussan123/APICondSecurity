@@ -9,6 +9,7 @@ namespace APICondSecurity.Mappings
         public EntitiesToDTOMappingProfile() 
         {
             CreateMap<Veiculo, VeiculoDTO>().ReverseMap();
+            CreateMap<Cameras, CamerasDTO>().ReverseMap();
         }
     }
 }

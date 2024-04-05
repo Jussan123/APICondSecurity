@@ -1,6 +1,8 @@
-﻿using APICondSecurity.Interfaces;
+﻿using APICondSecurity.DTOs;
+using APICondSecurity.Interfaces;
 using APICondSecurity.Models;
 using APICondSecurity.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,8 +13,10 @@ namespace APICondSecurity.Controllers
     public class PortaoController : Controller
     {
         private readonly PortaoRepository _portaoRepository;
-        public PortaoController(PortaoRepository portaoRepository)
+        private readonly IMapper _mapper;
+        public PortaoController(PortaoRepository portaoRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _portaoRepository = portaoRepository;
         }
 
@@ -74,7 +78,8 @@ namespace APICondSecurity.Controllers
             {
                 return NotFound("Portao Não encontrada para o Id informado.");
             }
-            return Ok(portao);
+            var portaoDTO = _mapper.Map<PortaoDTO>(portao);
+            return Ok(portaoDTO);
         }
 
         [HttpGet("GetAll")]

@@ -1,6 +1,8 @@
-﻿using APICondSecurity.Interfaces;
+﻿using APICondSecurity.DTOs;
+using APICondSecurity.Interfaces;
 using APICondSecurity.Models;
 using APICondSecurity.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,8 +13,10 @@ namespace APICondSecurity.Controllers
     public class RfidController : Controller
     {
         private readonly RfidRepository _rfidRepository;
-        public RfidController(RfidRepository rfidRepository)
+        private readonly IMapper _mapper;
+        public RfidController(RfidRepository rfidRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _rfidRepository = rfidRepository;
         }
 
@@ -74,7 +78,8 @@ namespace APICondSecurity.Controllers
             {
                 return NotFound("Rfid Não encontrada para o Id informado.");
             }
-            return Ok(rfid);
+            var rfidDTO = _mapper.Map<RfidDTO>(rfid);
+            return Ok(rfidDTO);
         }
 
         [HttpGet("GetAll")]

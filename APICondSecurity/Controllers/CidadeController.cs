@@ -1,6 +1,8 @@
-﻿using APICondSecurity.Interfaces;
+﻿using APICondSecurity.DTOs;
+using APICondSecurity.Interfaces;
 using APICondSecurity.Models;
 using APICondSecurity.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,8 +13,10 @@ namespace APICondSecurity.Controllers
     public class CidadeController : Controller
     {
         private readonly CidadeRepository _cidadeRepository;
-        public CidadeController(CidadeRepository cidadeRepository)
+        private readonly IMapper _mapper;
+        public CidadeController(CidadeRepository cidadeRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _cidadeRepository = cidadeRepository;
         }
 
@@ -76,7 +80,8 @@ namespace APICondSecurity.Controllers
             {
                 return NotFound("Cidade Não encontrada para o Id informado.");
             }
-            return Ok(cidade);
+            var cidadeDTO = _mapper.Map<CidadeDTO>(cidade);
+            return Ok(cidadeDTO);
         }
 
         [HttpGet("GetAll")]

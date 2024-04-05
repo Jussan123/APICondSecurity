@@ -1,6 +1,8 @@
-﻿using APICondSecurity.Interfaces;
+﻿using APICondSecurity.DTOs;
+using APICondSecurity.Interfaces;
 using APICondSecurity.Models;
 using APICondSecurity.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,8 +13,10 @@ namespace APICondSecurity.Controllers
     public class ResidenciaController : Controller
     {
         private readonly ResidenciaRepository _residenciaRepository;
-        public ResidenciaController(ResidenciaRepository residenciaRepository)
+        private readonly IMapper _mapper;
+        public ResidenciaController(ResidenciaRepository residenciaRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _residenciaRepository = residenciaRepository;
         }
 
@@ -74,7 +78,8 @@ namespace APICondSecurity.Controllers
             {
                 return NotFound("Residencia Não encontrada para o Id informado.");
             }
-            return Ok(residencia);
+            var residenciaDTO = _mapper.Map<ResidenciaDTO>(residencia);
+            return Ok(residenciaDTO);
         }
 
         [HttpGet("GetAll")]

@@ -50,8 +50,10 @@ public partial class condSecurityContext : DbContext
     public virtual DbSet<VeiculoUsuario> VeiculoUsuario { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#pragma warning disable CS1030 // diretiva de #aviso
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseNpgsql("Database=cond-security;Host=cond-security.postgres.database.azure.com;Username=condsecurity;Password=TCS2024@;SSL Mode=Require;Persist Security Info=True");
+#pragma warning restore CS1030 // diretiva de #aviso
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

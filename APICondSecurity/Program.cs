@@ -2,8 +2,11 @@ using APICondSecurity.Interfaces;
 using APICondSecurity.Mappings;
 using APICondSecurity.Models;
 using APICondSecurity.Repositories;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +24,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAutoMapper(typeof(EntitiesToDTOMappingProfile));
 builder.Services.AddScoped<CameraRepository>();
 builder.Services.AddScoped<CidadeRepository>();
 builder.Services.AddScoped<CondominioRepository>();
@@ -34,8 +38,6 @@ builder.Services.AddScoped<RfidRepository>();
 builder.Services.AddScoped<TipoUsuarioRepository>();
 builder.Services.AddScoped<UsuarioRepository>();
 builder.Services.AddScoped<VeiculoRepository>();
-//Adicionar AutoMapper para o veiculo
-builder.Services.AddAutoMapper(typeof(EntitiesToDTOMappingProfile));
 builder.Services.AddScoped<VeiculoUsuarioRepository>();
 
 var app = builder.Build();

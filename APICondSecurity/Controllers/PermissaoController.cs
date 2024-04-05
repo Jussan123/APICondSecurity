@@ -1,6 +1,8 @@
-﻿using APICondSecurity.Interfaces;
+﻿using APICondSecurity.DTOs;
+using APICondSecurity.Interfaces;
 using APICondSecurity.Models;
 using APICondSecurity.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,8 +13,10 @@ namespace APICondSecurity.Controllers
     public class PermissaoController : Controller
     {
         private readonly PermissaoRepository _permissaoRepository;
-        public PermissaoController(PermissaoRepository permissaoRepository)
+        private readonly IMapper _mapper;
+        public PermissaoController(PermissaoRepository permissaoRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _permissaoRepository = permissaoRepository;
         }
 
@@ -74,7 +78,8 @@ namespace APICondSecurity.Controllers
             {
                 return NotFound("Permissao Não encontrada para o Id informado.");
             }
-            return Ok(permissao);
+            var permissaoDTO = _mapper.Map<PermissaoDTO>(permissao);
+            return Ok(permissaoDTO);
         }
 
         [HttpGet("GetAll")]

@@ -2,6 +2,7 @@
 using APICondSecurity.Interfaces;
 using APICondSecurity.Models;
 using APICondSecurity.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,8 +13,11 @@ namespace APICondSecurity.Controllers
     public class VeiculoController : Controller
     {
         private readonly VeiculoRepository _veiculoRepository;
-        public VeiculoController(VeiculoRepository veiculoRepository)
+        private readonly IMapper _mapper;
+
+        public VeiculoController(VeiculoRepository veiculoRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _veiculoRepository = veiculoRepository;
         }
 
@@ -75,11 +79,8 @@ namespace APICondSecurity.Controllers
             {
                 return NotFound("Veiculo Não encontrada para o Id informado.");
             }
-            VeiculoDTO veiculoDTO = new VeiculoDTO
-            {
 
-
-            }
+            var veiculoDTO = _mapper.Map<VeiculoDTO>(veiculo);
             return Ok(veiculoDTO);
         }
 

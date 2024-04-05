@@ -1,6 +1,8 @@
-﻿using APICondSecurity.Interfaces;
+﻿using APICondSecurity.DTOs;
+using APICondSecurity.Interfaces;
 using APICondSecurity.Models;
 using APICondSecurity.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,8 +13,10 @@ namespace APICondSecurity.Controllers
     public class NotificacaoController : Controller
     {
         private readonly NotificacaoRepository _notificacaoRepository;
-        public NotificacaoController(NotificacaoRepository notificacaoRepository)
+        private readonly IMapper _mapper;
+        public NotificacaoController(NotificacaoRepository notificacaoRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _notificacaoRepository = notificacaoRepository;
         }
 
@@ -74,6 +78,7 @@ namespace APICondSecurity.Controllers
             {
                 return NotFound("Notificacao Não encontrada para o Id informado.");
             }
+            var notificacaoDTO = _mapper.Map<NotificacaoDTO>(notificacao);
             return Ok(notificacao);
         }
 

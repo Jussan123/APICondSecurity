@@ -1,6 +1,8 @@
-﻿using APICondSecurity.Interfaces;
+﻿using APICondSecurity.DTOs;
+using APICondSecurity.Interfaces;
 using APICondSecurity.Models;
 using APICondSecurity.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,8 +13,10 @@ namespace APICondSecurity.Controllers
     public class RegistrosController : Controller
     {
         private readonly RegistrosRepository _registrosRepository;
-        public RegistrosController(RegistrosRepository registrosRepository)
+        private readonly IMapper _mapper;
+        public RegistrosController(RegistrosRepository registrosRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _registrosRepository = registrosRepository;
         }
 
@@ -74,7 +78,8 @@ namespace APICondSecurity.Controllers
             {
                 return NotFound("Registros Não encontrada para o Id informado.");
             }
-            return Ok(registros);
+            var registrosDTO = _mapper.Map<RegistrosDTO>(registros);
+            return Ok(registrosDTO);
         }
 
         [HttpGet("GetAll")]

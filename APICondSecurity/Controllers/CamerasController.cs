@@ -1,6 +1,8 @@
-﻿using APICondSecurity.Interfaces;
+﻿using APICondSecurity.DTOs;
+using APICondSecurity.Interfaces;
 using APICondSecurity.Models;
 using APICondSecurity.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,8 +13,10 @@ namespace APICondSecurity.Controllers
     public class CamerasController : Controller
     {
         private readonly CameraRepository _cameraRepository;
-        public CamerasController(CameraRepository cameraRepository)
+        private readonly IMapper _mapper;
+        public CamerasController(CameraRepository cameraRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _cameraRepository = cameraRepository;
         }
 
@@ -72,7 +76,8 @@ namespace APICondSecurity.Controllers
             {
                 return NotFound("Camera Não encontrada para o Id informado.");
             }
-            return Ok(camera);
+            var cameraDTO = _mapper.Map<CamerasDTO>(camera);
+            return Ok(cameraDTO);
         }
 
         [HttpGet("GetAll")]

@@ -1,6 +1,8 @@
-﻿using APICondSecurity.Interfaces;
+﻿using APICondSecurity.DTOs;
+using APICondSecurity.Interfaces;
 using APICondSecurity.Models;
 using APICondSecurity.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,8 +13,10 @@ namespace APICondSecurity.Controllers
     public class UfController : Controller
     {
         private readonly UfRepository _ufRepository;
-        public UfController(UfRepository ufRepository)
+        private readonly IMapper _mapper;
+        public UfController(UfRepository ufRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _ufRepository = ufRepository;
         }
 
@@ -74,7 +78,8 @@ namespace APICondSecurity.Controllers
             {
                 return NotFound("Uf Não encontrada para o Id informado.");
             }
-            return Ok(uf);
+            var ufDTO = _mapper.Map<UfDTO>(uf);
+            return Ok(ufDTO);
         }
 
         [HttpGet("GetAll")]
