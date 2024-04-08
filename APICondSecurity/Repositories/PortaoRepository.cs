@@ -26,7 +26,7 @@ namespace APICondSecurity.Repositories
             try
             {
                 _context.Portao.Remove(portao);
-            } 
+            }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString(), ex.Message);
@@ -41,7 +41,7 @@ namespace APICondSecurity.Repositories
                 _context.Portao.Add(portao);
                 _context.SaveChanges();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 throw;
@@ -68,7 +68,7 @@ namespace APICondSecurity.Repositories
             {
                 return await _context.Portao.FirstOrDefaultAsync(c => c.IdPortao == IdPortao);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 Console.WriteLine($"Erro ao buscar portao: {ex.Message}");
@@ -82,7 +82,7 @@ namespace APICondSecurity.Repositories
             {
                 return await _context.Portao.ToListAsync();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 throw;

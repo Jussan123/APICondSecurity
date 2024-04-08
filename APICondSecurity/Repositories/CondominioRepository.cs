@@ -26,7 +26,7 @@ namespace APICondSecurity.Repositories
             try
             {
                 _context.Condominio.Remove(condominio);
-            } 
+            }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString(), ex.Message);
@@ -41,7 +41,7 @@ namespace APICondSecurity.Repositories
                 _context.Condominio.Add(condominio);
                 _context.SaveChanges();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 throw;
@@ -68,7 +68,7 @@ namespace APICondSecurity.Repositories
             {
                 return await _context.Condominio.FirstOrDefaultAsync(c => c.IdCondominio == IdCondominio);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 Console.WriteLine($"Erro ao buscar condominio: {ex.Message}");
@@ -82,7 +82,7 @@ namespace APICondSecurity.Repositories
             {
                 return await _context.Condominio.ToListAsync();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 throw;

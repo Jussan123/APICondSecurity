@@ -26,7 +26,7 @@ namespace APICondSecurity.Repositories
             try
             {
                 _context.Permissao.Remove(permissao);
-            } 
+            }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString(), ex.Message);
@@ -41,7 +41,7 @@ namespace APICondSecurity.Repositories
                 _context.Permissao.Add(permissao);
                 _context.SaveChanges();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 throw;
@@ -68,7 +68,7 @@ namespace APICondSecurity.Repositories
             {
                 return await _context.Permissao.FirstOrDefaultAsync(c => c.IdPermissao == IdPermissao);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 Console.WriteLine($"Erro ao buscar permissao: {ex.Message}");
@@ -82,7 +82,7 @@ namespace APICondSecurity.Repositories
             {
                 return await _context.Permissao.ToListAsync();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 throw;

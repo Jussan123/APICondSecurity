@@ -1,11 +1,11 @@
-﻿using APICondSecurity.Models;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace APICondSecurity.DTOs
 {
     public class CamerasDTO
     {
+        public int IdCamera { get; set; }
+
         [Required]
         [StringLength(20)]
         public string Posicao { get; set; }
@@ -19,3 +19,4 @@ namespace APICondSecurity.DTOs
         public string IpCamera { get; set; }
     }
 }
+

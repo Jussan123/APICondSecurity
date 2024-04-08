@@ -26,7 +26,7 @@ namespace APICondSecurity.Repositories
             try
             {
                 _context.Notificacao.Remove(notificacao);
-            } 
+            }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString(), ex.Message);
@@ -41,7 +41,7 @@ namespace APICondSecurity.Repositories
                 _context.Notificacao.Add(notificacao);
                 _context.SaveChanges();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 throw;
@@ -68,7 +68,7 @@ namespace APICondSecurity.Repositories
             {
                 return await _context.Notificacao.FirstOrDefaultAsync(c => c.IdNotificacao == IdNotificacao);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 Console.WriteLine($"Erro ao buscar notificacao: {ex.Message}");
@@ -82,7 +82,7 @@ namespace APICondSecurity.Repositories
             {
                 return await _context.Notificacao.ToListAsync();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 throw;

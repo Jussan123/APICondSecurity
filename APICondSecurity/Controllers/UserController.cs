@@ -1,7 +1,6 @@
 ﻿using APICondSecurity.DTOs;
 using APICondSecurity.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace APICondSecurity.Controllers
 {

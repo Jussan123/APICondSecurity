@@ -1,11 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace APICondSecurity.DTOs
 {
     public class VeiculoDTO
     {
- 
+
         [Required]
         [StringLength(255)]
         public string Placa { get; set; }

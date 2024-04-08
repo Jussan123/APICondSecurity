@@ -26,7 +26,7 @@ namespace APICondSecurity.Repositories
             try
             {
                 _context.Endereco.Remove(endereco);
-            } 
+            }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString(), ex.Message);
@@ -41,7 +41,7 @@ namespace APICondSecurity.Repositories
                 _context.Endereco.Add(endereco);
                 _context.SaveChanges();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 throw;
@@ -68,7 +68,7 @@ namespace APICondSecurity.Repositories
             {
                 return await _context.Endereco.FirstOrDefaultAsync(c => c.IdEndereco == IdEndereco);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 Console.WriteLine($"Erro ao buscar endereco: {ex.Message}");
@@ -82,7 +82,7 @@ namespace APICondSecurity.Repositories
             {
                 return await _context.Endereco.ToListAsync();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 throw;

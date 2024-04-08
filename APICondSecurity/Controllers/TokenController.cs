@@ -1,7 +1,5 @@
-﻿using APICondSecurity.Interfaces;
-using APICondSecurity.Models;
+﻿using APICondSecurity.Models;
 using APICondSecurity.Repositories;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers

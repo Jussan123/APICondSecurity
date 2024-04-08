@@ -1,12 +1,7 @@
-using APICondSecurity.Interfaces;
 using APICondSecurity.Mappings;
 using APICondSecurity.Models;
 using APICondSecurity.Repositories;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -6,7 +6,7 @@ namespace APICondSecurity.Mappings
 {
     public class EntitiesToDTOMappingProfile : Profile
     {
-        public EntitiesToDTOMappingProfile() 
+        public EntitiesToDTOMappingProfile()
         {
             CreateMap<Veiculo, VeiculoDTO>().ReverseMap();
             CreateMap<Cameras, CamerasDTO>().ReverseMap();

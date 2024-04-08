@@ -1,9 +1,7 @@
 ﻿using APICondSecurity.DTOs;
-using APICondSecurity.Interfaces;
 using APICondSecurity.Models;
 using APICondSecurity.Repositories;
 using AutoMapper;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
@@ -30,7 +28,7 @@ namespace APICondSecurity.Controllers
                 await _veiculoTerceiroRepository.SaveAllAsync();
                 return Ok("VeiculoTerceiro cadastrada com sucesso!");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return BadRequest($"Ocorreu um erro ao salvar a veiculoTerceiro: {ex.Message}");
             }

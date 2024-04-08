@@ -1,9 +1,7 @@
 ﻿using APICondSecurity.DTOs;
-using APICondSecurity.Interfaces;
 using APICondSecurity.Models;
 using APICondSecurity.Repositories;
 using AutoMapper;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
@@ -29,7 +27,7 @@ namespace APICondSecurity.Controllers
                 await _tipoUsuarioRepository.SaveAllAsync();
                 return Ok("TipoUsuario cadastrada com sucesso!");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return BadRequest($"Ocorreu um erro ao salvar a tipoUsuario: {ex.Message}");
             }
