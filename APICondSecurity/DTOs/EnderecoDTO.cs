@@ -4,6 +4,7 @@ namespace APICondSecurity.DTOs
 {
     public class EnderecoDTO
     {
+        public int IdEndereco { get; set; }
         [Required]
         [StringLength(30)]
         public string Rua { get; set; }

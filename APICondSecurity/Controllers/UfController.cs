@@ -19,8 +19,9 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("Cadastrar")]
-        public async Task<ActionResult> CadastrarUf(Uf uf)
+        public async Task<ActionResult> CadastrarUf(UfDTO ufDTO)
         {
+            var uf = _mapper.Map<Uf>(ufDTO);
             _ufRepository.Incluir(uf);
             try
             {
@@ -34,11 +35,23 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPut("Alterar")]
-        public async Task<ActionResult> UpdateUf(Uf uf)
+        public async Task<ActionResult> UpdateUf(UfDTO ufDTO)
         {
-            _ufRepository.Alterar(uf);
+            if (ufDTO.IdUf == null)
+            {
+                return BadRequest("Não é possível alterar a Uf. É necessário informar o Id.");
+            }
+            var ufExiste = await _ufRepository.Get(ufDTO.IdUf);
+            if (ufExiste == null)
+            {
+                return NotFound("Uf Não encontrada.");
+            }
+
+            ufExiste.Sigla = ufDTO.Sigla;
+            ufExiste.Nome = ufDTO.Nome;
             try
             {
+                _ufRepository.Alterar(ufExiste);
                 await _ufRepository.SaveAllAsync();
                 return Ok("Uf alterada com sucesso");
             }

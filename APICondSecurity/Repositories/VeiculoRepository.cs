@@ -76,6 +76,20 @@ namespace APICondSecurity.Repositories
             }
         }
 
+        public async Task<Veiculo> GetByPlaca(string  placa)
+        {
+            try
+            {
+                return await _context.Veiculo.FirstOrDefaultAsync(c => c.Placa == placa);
+            }
+            catch (Exception ex) 
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine($"Erro ao buscar veiculo pela Placa: {ex.Message}");
+                throw;
+            }
+        }
+
         public async Task<IEnumerable<Veiculo>> GetAll()
         {
             try

@@ -19,8 +19,9 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("Cadastrar")]
-        public async Task<ActionResult> CadastrarRfid(Rfid rfid)
+        public async Task<ActionResult> CadastrarRfid(RfidDTO rfidDTO)
         {
+            var rfid = _mapper.Map<Rfid>(rfidDTO);
             _rfidRepository.Incluir(rfid);
             try
             {
@@ -34,11 +35,24 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPut("Alterar")]
-        public async Task<ActionResult> UpdateRfid(Rfid rfid)
+        public async Task<ActionResult> UpdateRfid(RfidDTO rfidDTO)
         {
-            _rfidRepository.Alterar(rfid);
+            if (rfidDTO.IdRfid == null) 
+            {
+                return BadRequest("Não é possível alterar o Rfid. É necessário informar o Id.");
+            }
+            var rfidExiste = await _rfidRepository.Get(rfidDTO.IdRfid);
+            if (rfidExiste == null)
+            {
+                return NotFound("Rfid Não encontrado.");
+            }
+            
+            rfidExiste.Numero = rfidDTO.Numero;
+            rfidExiste.Situacao = rfidDTO.Situacao;
+
             try
             {
+                _rfidRepository.Alterar(rfidExiste);
                 await _rfidRepository.SaveAllAsync();
                 return Ok("Rfid alterada com sucesso");
             }

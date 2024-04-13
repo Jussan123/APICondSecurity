@@ -4,6 +4,7 @@ namespace APICondSecurity.DTOs
 {
     public class ResidenciaDTO
     {
+        public int IdResidencia { get; set; }
         public int Numero { get; set; }
 
         [StringLength(20)]

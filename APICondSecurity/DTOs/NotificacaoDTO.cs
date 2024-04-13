@@ -6,6 +6,7 @@ namespace APICondSecurity.DTOs
 {
     public class NotificacaoDTO
     {
+        public int IdNotificacao { get; set; }
         [Required]
         [Precision(6, 0)]
         public TimeOnly DataHora { get; set; }

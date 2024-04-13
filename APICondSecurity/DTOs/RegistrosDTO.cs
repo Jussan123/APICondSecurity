@@ -5,6 +5,7 @@ namespace APICondSecurity.DTOs
 {
     public class RegistrosDTO
     {
+        public int IdRegistros { get; set; }
         [Required]
         public DateTime? DataHoraEntrada { get; set; }
         [Required]

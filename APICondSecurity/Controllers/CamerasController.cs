@@ -3,6 +3,8 @@ using APICondSecurity.Models;
 using APICondSecurity.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace APICondSecurity.Controllers
 {
@@ -23,12 +25,15 @@ namespace APICondSecurity.Controllers
         {
             var camera = _mapper.Map<Cameras>(cameraDTO);
             _cameraRepository.Incluir(camera);
-            if (!await _cameraRepository.SaveAllAsync())
+            try
             {
-                return BadRequest("Ocorreu um erro ao salvar a câmera");
+                await _cameraRepository.SaveAllAsync();
+                return Ok("Câmera cadastrada com sucesso!");
             }
-
-            return Ok("Câmera cadastrada com sucesso!");
+            catch (Exception ex)
+            {
+                return BadRequest($"Ocorreu um erro ao salvar a câmera: {ex.Message}");
+            }
         }
 
         [HttpPut("Alterar")]
@@ -36,17 +41,23 @@ namespace APICondSecurity.Controllers
         {
             if (cameraDTO.IdCamera == null)
             {
-                return BadRequest("Não é possível alterar o cliente. è necessário informar o ID.");
+                return BadRequest("Não é possível alterar a camera é necessário informar o ID.");
             }
+
             var cameraExiste = await _cameraRepository.Get(cameraDTO.IdCamera);
+           
             if (cameraExiste == null)
             {
                 return NotFound("Camera não identificada.");
             }
-            var camera = _mapper.Map<Cameras>(cameraDTO);
-            _cameraRepository.Alterar(camera);
+
+            cameraExiste.IpCamera = cameraDTO.IpCamera;
+            cameraExiste.Posicao = cameraDTO.Posicao;
+            cameraExiste.Tipo = cameraDTO.Tipo;
+
             try
             {
+                _cameraRepository.Alterar(cameraExiste);
                 await _cameraRepository.SaveAllAsync();
                 return Ok("Camera alterada com sucesso");
             }

@@ -32,8 +32,8 @@ namespace APICondSecurity.Controllers
                 return BadRequest($"Ocorreu um erro ao salvar a permissao: {ex.Message}");
             }
         }
-
-        [HttpPut("Alterar")]
+        // Não vamos usar alteração na permissão
+        /*[HttpPut("Alterar")]
         public async Task<ActionResult> UpdatePermissao(Permissao permissao)
         {
             _permissaoRepository.Alterar(permissao);
@@ -46,7 +46,7 @@ namespace APICondSecurity.Controllers
             {
                 return BadRequest($"Erro ao alterar a permissao: {ex.Message}");
             }
-        }
+        }*/
 
         [HttpDelete("Excluir")]
         public async Task<ActionResult> Delete(int IdPermissao)

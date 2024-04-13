@@ -76,6 +76,20 @@ namespace APICondSecurity.Repositories
             }
         }
 
+        public async Task<Cidade> GetByIBGE(int CidadeIbge)
+        {
+            try
+            {
+                return await _context.Cidade.FirstOrDefaultAsync(c => c.CidadeIbge == CidadeIbge);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine($"Erro ao Buscar IBGE: {ex.Message}");
+                throw;
+            }
+        }
+
         public async Task<IEnumerable<Cidade>> GetAll()
         {
             try

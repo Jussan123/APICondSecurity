@@ -4,6 +4,7 @@ namespace APICondSecurity.DTOs
 {
     public class UfDTO
     {
+        public int IdUf { get; set; }
         [Required]
         [StringLength(30)]
         public string Nome { get; set; }

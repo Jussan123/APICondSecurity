@@ -19,8 +19,9 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("Cadastrar")]
-        public async Task<ActionResult> CadastrarResidencia(Residencia residencia)
+        public async Task<ActionResult> CadastrarResidencia(ResidenciaDTO residenciaDTO)
         {
+            var residencia = _mapper.Map<Residencia>(residenciaDTO);
             _residenciaRepository.Incluir(residencia);
             try
             {
@@ -34,11 +35,27 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPut("Alterar")]
-        public async Task<ActionResult> UpdateResidencia(Residencia residencia)
+        public async Task<ActionResult> UpdateResidencia(ResidenciaDTO residenciaDTO)
         {
-            _residenciaRepository.Alterar(residencia);
+            if (residenciaDTO.IdResidencia == null)
+            {
+                return BadRequest("Não é possivel alterar a residência. É necessário o Id.");
+            }
+            var residenciaExiste = await _residenciaRepository.Get(residenciaDTO.IdResidencia);
+
+            if (residenciaExiste == null)
+            {
+                return NotFound("Residência não encontrada.");
+            }
+
+            residenciaExiste.Numero = residenciaDTO.Numero;
+            residenciaExiste.Bloco = residenciaDTO.Bloco;
+            residenciaExiste.Quadra = residenciaDTO.Quadra;
+            residenciaExiste.Rua = residenciaDTO.Rua;
+            
             try
             {
+                _residenciaRepository.Alterar(residenciaExiste);
                 await _residenciaRepository.SaveAllAsync();
                 return Ok("Residencia alterada com sucesso");
             }

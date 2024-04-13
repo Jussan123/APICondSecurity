@@ -19,8 +19,9 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("Cadastrar")]
-        public async Task<ActionResult> CadastrarPortao(Portao portao)
+        public async Task<ActionResult> CadastrarPortao(PortaoDTO portaoDTO)
         {
+            var portao = _mapper.Map<Portao>(portaoDTO);
             _portaoRepository.Incluir(portao);
             try
             {
@@ -34,11 +35,23 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPut("Alterar")]
-        public async Task<ActionResult> UpdatePortao(Portao portao)
+        public async Task<ActionResult> UpdatePortao(PortaoDTO portaoDTO)
         {
-            _portaoRepository.Alterar(portao);
+            if (portaoDTO.IdPortao == null) 
+            {
+                return BadRequest("Não é possivel alterar o portão. É necessário informar o Id.");
+            }
+            var portaoExiste = await _portaoRepository.Get(portaoDTO.IdPortao);
+            if (portaoExiste == null)
+            {
+                return NotFound("Portão não encontrado.");
+            }
+
+            portaoExiste.Nome = portaoDTO.Nome;
+
             try
             {
+                _portaoRepository.Alterar(portaoExiste);
                 await _portaoRepository.SaveAllAsync();
                 return Ok("Portao alterada com sucesso");
             }

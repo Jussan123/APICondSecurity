@@ -19,8 +19,9 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("Cadastrar")]
-        public async Task<ActionResult> CadastrarTipoUsuario(TipoUsuario tipoUsuario)
+        public async Task<ActionResult> CadastrarTipoUsuario(TipoUsuarioDTO tipoUsuarioDTO)
         {
+            var tipoUsuario = _mapper.Map<TipoUsuario>(tipoUsuarioDTO);
             _tipoUsuarioRepository.Incluir(tipoUsuario);
             try
             {
@@ -34,11 +35,24 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPut("Alterar")]
-        public async Task<ActionResult> UpdateTipoUsuario(TipoUsuario tipoUsuario)
+        public async Task<ActionResult> UpdateTipoUsuario(TipoUsuarioDTO tipoUsuarioDTO)
         {
-            _tipoUsuarioRepository.Alterar(tipoUsuario);
+            if (tipoUsuarioDTO.IdTipoUsuario == null)
+            {
+                return BadRequest("Não é possivel alterar o Tipo de Usuário. É necessário Informar o Id.");
+            }
+
+            var tipoUsuarioExiste = await _tipoUsuarioRepository.Get(tipoUsuarioDTO.IdTipoUsuario);
+            if (tipoUsuarioExiste == null)
+            {
+                return NotFound("Tipo de usuário não encontrado.");
+            }
+
+            tipoUsuarioExiste.Tipo = tipoUsuarioDTO.Tipo;
+            
             try
             {
+                _tipoUsuarioRepository.Alterar(tipoUsuarioExiste);
                 await _tipoUsuarioRepository.SaveAllAsync();
                 return Ok("TipoUsuario alterada com sucesso");
             }

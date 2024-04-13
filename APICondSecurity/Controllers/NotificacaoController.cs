@@ -19,8 +19,9 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("Cadastrar")]
-        public async Task<ActionResult> CadastrarNotificacao(Notificacao notificacao)
+        public async Task<ActionResult> CadastrarNotificacao(NotificacaoDTO notificacaoDTO)
         {
+            var notificacao = _mapper.Map<Notificacao>(notificacaoDTO);
             _notificacaoRepository.Incluir(notificacao);
             try
             {
@@ -32,10 +33,23 @@ namespace APICondSecurity.Controllers
                 return BadRequest($"Ocorreu um erro ao salvar a notificacao: {ex.Message}");
             }
         }
-
+        /* Não vamos permitir alterar as notificações
+         
         [HttpPut("Alterar")]
-        public async Task<ActionResult> UpdateNotificacao(Notificacao notificacao)
+        public async Task<ActionResult> UpdateNotificacao(NotificacaoDTO notificacaoDTO)
         {
+            if (notificacaoDTO.IdNotificacao == null)
+            {
+                return BadRequest("Não é Possivel alterar a notificação. É necessário informar od Id.");
+            }
+            var notificaoExiste = await _notificacaoRepository.Get(notificacaoDTO.IdNotificacao);
+            if (notificaoExiste == null)
+            {
+                return NotFound("Notificação não encontrada.");
+            }
+            notificaoExiste.Situacao = notificacaoDTO.Situacao;
+            notificaoExiste.Permissao = notificacaoDTO.Permissao;
+            notificaoExiste.
             _notificacaoRepository.Alterar(notificacao);
             try
             {
@@ -46,7 +60,8 @@ namespace APICondSecurity.Controllers
             {
                 return BadRequest($"Erro ao alterar a notificacao: {ex.Message}");
             }
-        }
+        } 
+        */
 
         [HttpDelete("Excluir")]
         public async Task<ActionResult> Delete(int IdNotificacao)

@@ -5,6 +5,7 @@ namespace APICondSecurity.DTOs
 {
     public class VeiculoTerceiroDTO
     {
+        public int IdVeiculoTerceiro { get; set; }
 
         [Required]
         [StringLength(255)]

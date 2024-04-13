@@ -18,10 +18,15 @@ namespace APICondSecurity.Controllers
             _cidadeRepository = cidadeRepository;
         }
 
-
         [HttpPost("Cadastrar")]
-        public async Task<ActionResult> CadastrarCidade(Cidade cidade)
+        public async Task<ActionResult> CadastrarCidade(CidadeDTO cidadeDTO)
         {
+            var cidadeIBGEExiste = await _cidadeRepository.Get(cidadeDTO.CidadeIbge);
+            if (cidadeIBGEExiste != null) 
+            {
+                return NotFound("Codigo IBGE já cadastrado");
+            }
+            var cidade = _mapper.Map<Cidade>(cidadeDTO);
             _cidadeRepository.Incluir(cidade);
             try
             {
@@ -35,9 +40,28 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPut("Alterar")]
-        public async Task<ActionResult> UpdateCidade(Cidade cidade)
+        public async Task<ActionResult> UpdateCidade(CidadeDTO cidadeDTO)
         {
-            _cidadeRepository.Alterar(cidade);
+            if (cidadeDTO.IdCidade == null)
+            {
+                return BadRequest("Não é possível alterar a cidade. É necessário informar o ID.");
+            }
+            var cidadeExiste = await _cidadeRepository.Get(cidadeDTO.IdCidade);
+
+            if (cidadeExiste == null)
+            {
+                return NotFound("Cidade não identificada.");
+            }
+
+            var cidadeIBGEExiste = await _cidadeRepository.GetByIBGE(cidadeDTO.CidadeIbge);
+            if (cidadeIBGEExiste != null && cidadeIBGEExiste.IdCidade != cidadeDTO.IdCidade)
+            {
+                return BadRequest("Codigo IBGE já cadastrado");
+            }
+
+            cidadeExiste.Nome = cidadeDTO.Nome;
+            cidadeExiste.CidadeIbge = cidadeDTO.CidadeIbge;
+
             try
             {
                 await _cidadeRepository.SaveAllAsync();
@@ -56,7 +80,7 @@ namespace APICondSecurity.Controllers
             if (cidade == null)
 
             {
-                return NotFound("Id da cidade não encontrado.");
+                return NotFound("Id da cidade não encontrada.");
             }
             _cidadeRepository.Excluir(await cidade);
             try
