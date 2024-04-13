@@ -28,10 +28,5 @@ namespace APICondSecurity.DTOs
         [Required]
         public int? IdVeiculo { get; set; }
 
-        public virtual Portao IdPortaoNavigation { get; set; }
-
-        public virtual VeiculoTerceiro IdVeiculoTerceiroNavigation { get; set; }
-
-        public virtual VeiculoUsuario IdVeiculoUsuarioNavigation { get; set; }
     }
 }

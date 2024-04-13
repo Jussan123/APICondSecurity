@@ -76,6 +76,20 @@ namespace APICondSecurity.Repositories
             }
         }
 
+        public async Task<VeiculoUsuario> GetByRfid(int IdRfid)
+        {
+            try
+            {
+                return await _context.VeiculoUsuario.FirstOrDefaultAsync(c => c.IdRfid == IdRfid);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine("Erro ao buscar veiculo pelo RFID");
+                throw;
+            }
+        }
+
         public async Task<IEnumerable<VeiculoUsuario>> GetAll()
         {
             try

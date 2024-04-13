@@ -25,11 +25,5 @@ namespace APICondSecurity.DTOs
 
         [Required]
         public int IdUsuario { get; set; }
-
-        public virtual Usuario IdUsuarioNavigation { get; set; }
-
-        public virtual ICollection<Permissao> Permissao { get; set; } = new List<Permissao>();
-
-        public virtual ICollection<VeiculoTerceiro> VeiculoTerceiro { get; set; } = new List<VeiculoTerceiro>();
     }
 }

@@ -20,8 +20,9 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("Cadastrar")]
-        public async Task<ActionResult> CadastrarVeiculo(Veiculo veiculo)
+        public async Task<ActionResult> CadastrarVeiculo(VeiculoDTO veiculoDTO)
         {
+            var veiculo = _mapper.Map<Veiculo>(veiculoDTO);
             _veiculoRepository.Incluir(veiculo);
             try
             {
@@ -35,11 +36,27 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPut("Alterar")]
-        public async Task<ActionResult> UpdateVeiculo(Veiculo veiculo)
+        public async Task<ActionResult> UpdateVeiculo(VeiculoDTO veiculoDTO)
         {
-            _veiculoRepository.Alterar(veiculo);
+            if (veiculoDTO.IdVeiculo == null) 
+            {
+                return BadRequest("não é possível alterar o veículo. É necessário informar o Id.");
+            }
+            var veiculoExiste = await _veiculoRepository.Get(veiculoDTO.IdVeiculo);
+            if (veiculoExiste == null)
+            {
+                return NotFound("Veículo não encontrado");
+            }
+            veiculoExiste.Placa = veiculoDTO.Placa;
+            veiculoExiste.Marca = veiculoDTO.Marca;
+            veiculoExiste.Modelo = veiculoDTO.Modelo;
+            veiculoExiste.Cor = veiculoDTO.Cor;
+            veiculoExiste.Ano = veiculoDTO.Ano;
+            veiculoExiste.Situacao = veiculoDTO.Situacao;
+
             try
             {
+                _veiculoRepository.Alterar(veiculoExiste);
                 await _veiculoRepository.SaveAllAsync();
                 return Ok("Veiculo alterada com sucesso");
             }

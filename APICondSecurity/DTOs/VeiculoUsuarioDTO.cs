@@ -18,9 +18,5 @@ namespace APICondSecurity.DTOs
 
         [Required]
         public int IdRfid { get; set; }
-
-        public virtual Rfid IdRf { get; set; }
-
-        public virtual Usuario IdUsuarioNavigation { get; set; }
     }
 }

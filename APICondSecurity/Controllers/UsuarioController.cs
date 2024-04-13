@@ -19,8 +19,9 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("Cadastrar")]
-        public async Task<ActionResult> CadastrarUsuario(Usuario usuario)
+        public async Task<ActionResult> CadastrarUsuario(UsuarioDTO usuarioDTO)
         {
+            var usuario = _mapper.Map<Usuario>(usuarioDTO);
             _usuarioRepository.Incluir(usuario);
             try
             {
@@ -34,11 +35,26 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPut("Alterar")]
-        public async Task<ActionResult> UpdateUsuario(Usuario usuario)
+        public async Task<ActionResult> UpdateUsuario(UsuarioDTO usuarioDTO)
         {
-            _usuarioRepository.Alterar(usuario);
+            if (usuarioDTO.IdUsuario == null) 
+            {
+                return BadRequest("Não foi possível alterar usuário. è necessário informar o Id.");
+            }
+            var usuarioExiste = await _usuarioRepository.Get(usuarioDTO.IdUsuario);
+            if (usuarioExiste == null)
+            {
+                return NotFound("Usuário não encontrado.");
+            }
+            usuarioExiste.Nome = usuarioDTO.Nome;
+            usuarioExiste.Telefone = usuarioDTO.Telefone;
+            usuarioExiste.Email = usuarioDTO.Email;
+            usuarioExiste.Senha = usuarioDTO.Senha;
+            usuarioExiste.Situacao = usuarioDTO.Situacao;
+
             try
             {
+                _usuarioRepository.Alterar(usuarioExiste);
                 await _usuarioRepository.SaveAllAsync();
                 return Ok("Usuario alterada com sucesso");
             }

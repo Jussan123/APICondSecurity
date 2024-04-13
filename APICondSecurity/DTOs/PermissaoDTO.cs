@@ -12,7 +12,5 @@ namespace APICondSecurity.DTOs
 
         [Required]
         public int IdNotificacao { get; set; }
-        public virtual Notificacao IdNotificacaoNavigation { get; set; }
-        public virtual ICollection<VeiculoTerceiro> VeiculoTerceiro { get; set; } = new List<VeiculoTerceiro>();
     }
 }

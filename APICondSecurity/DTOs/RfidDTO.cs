@@ -13,8 +13,5 @@ namespace APICondSecurity.DTOs
 
         public int IdCondominio { get; set; }
 
-        public virtual Condominio IdCondominioNavigation { get; set; }
-        public virtual ICollection<VeiculoUsuario> VeiculoUsuario { get; set; } = new List<VeiculoUsuario>();
-
     }
 }

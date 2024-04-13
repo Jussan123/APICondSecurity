@@ -11,6 +11,7 @@ namespace APICondSecurity.Controllers
     public class VeiculoUsuarioController : Controller
     {
         private readonly VeiculoUsuarioRepository _veiculoUsuarioRepository;
+        private readonly RfidRepository _rfidRepository;
         private readonly IMapper _mapper;
         public VeiculoUsuarioController(VeiculoUsuarioRepository veiculoUsuarioRepository, IMapper mapper)
         {
@@ -19,8 +20,9 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("Cadastrar")]
-        public async Task<ActionResult> CadastrarVeiculoUsuario(VeiculoUsuario veiculoUsuario)
+        public async Task<ActionResult> CadastrarVeiculoUsuario(VeiculoUsuarioDTO veiculoUsuarioDTO)
         {
+            var veiculoUsuario = _mapper.Map<VeiculoUsuario>(veiculoUsuarioDTO);
             _veiculoUsuarioRepository.Incluir(veiculoUsuario);
             try
             {
@@ -34,11 +36,33 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPut("Alterar")]
-        public async Task<ActionResult> UpdateVeiculoUsuario(VeiculoUsuario veiculoUsuario)
+        public async Task<ActionResult> UpdateVeiculoUsuario(VeiculoUsuarioDTO veiculoUsuarioDTO)
         {
-            _veiculoUsuarioRepository.Alterar(veiculoUsuario);
+            if (veiculoUsuarioDTO.IdVeiculoUsuario == null)
+            {
+                return BadRequest("Não é possível alterar o veículo do usuário. É necessário informar o Id.");
+            }
+            var veiculoUsuarioExiste = await _veiculoUsuarioRepository.Get(veiculoUsuarioDTO.IdVeiculoUsuario);
+            if (veiculoUsuarioDTO ==  null)
+            {
+                return NotFound("Veiculo do Usuário não encontrado.");
+            }
+            var rfidExiste = await _rfidRepository.Get(veiculoUsuarioDTO.IdRfid);
+            if (rfidExiste.IdRfid == null)
+            {
+                return BadRequest("RFID não encontrado.");
+            }
+            var rfidcadastrado = await _veiculoUsuarioRepository.GetByRfid(rfidExiste.IdRfid);
+            if (rfidcadastrado.IdRfid != null)
+            {
+                return BadRequest("RFID já cadastrado para outro veículo");
+            }
+
+            veiculoUsuarioExiste.Placa = veiculoUsuarioDTO.Placa;
+            veiculoUsuarioExiste.IdRfid = veiculoUsuarioDTO.IdRfid;
             try
             {
+                _veiculoUsuarioRepository.Alterar(veiculoUsuarioExiste);
                 await _veiculoUsuarioRepository.SaveAllAsync();
                 return Ok("VeiculoUsuario alterada com sucesso");
             }
