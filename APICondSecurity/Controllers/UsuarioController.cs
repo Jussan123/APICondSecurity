@@ -1,6 +1,6 @@
-﻿using APICondSecurity.DTOs;
-using APICondSecurity.Models;
-using APICondSecurity.Repositories;
+﻿using APICondSecurity.Application.DTOs;
+using APICondSecurity.Infra.Data.Models;
+using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,7 +37,7 @@ namespace APICondSecurity.Controllers
         [HttpPut("Alterar")]
         public async Task<ActionResult> UpdateUsuario(UsuarioDTO usuarioDTO)
         {
-            if (usuarioDTO.IdUsuario == null) 
+            if (usuarioDTO.IdUsuario == null)
             {
                 return BadRequest("Não foi possível alterar usuário. è necessário informar o Id.");
             }

@@ -1,6 +1,6 @@
-﻿using APICondSecurity.DTOs;
-using APICondSecurity.Models;
-using APICondSecurity.Repositories;
+﻿using APICondSecurity.Application.DTOs;
+using APICondSecurity.Infra.Data.Models;
+using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -52,7 +52,7 @@ namespace APICondSecurity.Controllers
             residenciaExiste.Bloco = residenciaDTO.Bloco;
             residenciaExiste.Quadra = residenciaDTO.Quadra;
             residenciaExiste.Rua = residenciaDTO.Rua;
-            
+
             try
             {
                 _residenciaRepository.Alterar(residenciaExiste);

@@ -1,6 +1,6 @@
-﻿using APICondSecurity.DTOs;
-using APICondSecurity.Models;
-using APICondSecurity.Repositories;
+﻿using APICondSecurity.Application.DTOs;
+using APICondSecurity.Infra.Data.Models;
+using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,7 +37,7 @@ namespace APICondSecurity.Controllers
         [HttpPut("Alterar")]
         public async Task<ActionResult> UpdateRfid(RfidDTO rfidDTO)
         {
-            if (rfidDTO.IdRfid == null) 
+            if (rfidDTO.IdRfid == null)
             {
                 return BadRequest("Não é possível alterar o Rfid. É necessário informar o Id.");
             }
@@ -46,7 +46,7 @@ namespace APICondSecurity.Controllers
             {
                 return NotFound("Rfid Não encontrado.");
             }
-            
+
             rfidExiste.Numero = rfidDTO.Numero;
             rfidExiste.Situacao = rfidDTO.Situacao;
 

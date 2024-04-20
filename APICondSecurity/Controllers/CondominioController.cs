@@ -1,6 +1,6 @@
-﻿using APICondSecurity.DTOs;
-using APICondSecurity.Models;
-using APICondSecurity.Repositories;
+﻿using APICondSecurity.Application.DTOs;
+using APICondSecurity.Infra.Data.Models;
+using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,11 +37,11 @@ namespace APICondSecurity.Controllers
         [HttpPut("Alterar")]
         public async Task<ActionResult> UpdateCondominio(CondominioDTO condominioDTO)
         {
-            if (condominioDTO.IdCondominio == null) 
+            if (condominioDTO.IdCondominio == null)
             {
                 return BadRequest("Não é possivel alterar o condominio. É necessário informar o Id");
             }
-            
+
             var condominioExiste = await _condominioRepository.Get(condominioDTO.IdCondominio);
             if (condominioExiste == null)
             {

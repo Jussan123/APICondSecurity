@@ -1,6 +1,7 @@
-using APICondSecurity.Mappings;
-using APICondSecurity.Models;
-using APICondSecurity.Repositories;
+using APICondSecurity.Infra.Ioc;
+using APICondSecurity.Infra.Data.Context;
+using APICondSecurity.Application.Mappings;
+using APICondSecurity.Infra.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,10 +16,12 @@ builder.Services.AddDbContext<condSecurityContext>(options =>
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     options.UseNpgsql(connectionString);
 });
+//builder.Services.AddInfrastructure(configuration);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
+builder.Services.AddInfrastructureSwagger();
 builder.Services.AddAutoMapper(typeof(EntitiesToDTOMappingProfile));
 builder.Services.AddScoped<CameraRepository>();
 builder.Services.AddScoped<CidadeRepository>();

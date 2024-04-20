@@ -1,6 +1,6 @@
-﻿using APICondSecurity.DTOs;
-using APICondSecurity.Models;
-using APICondSecurity.Repositories;
+﻿using APICondSecurity.Application.DTOs;
+using APICondSecurity.Infra.Data.Models;
+using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,7 +22,7 @@ namespace APICondSecurity.Controllers
         public async Task<ActionResult> CadastrarCidade(CidadeDTO cidadeDTO)
         {
             var cidadeIBGEExiste = await _cidadeRepository.Get(cidadeDTO.CidadeIbge);
-            if (cidadeIBGEExiste != null) 
+            if (cidadeIBGEExiste != null)
             {
                 return NotFound("Codigo IBGE já cadastrado");
             }

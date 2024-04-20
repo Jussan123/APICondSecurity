@@ -3,7 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APICondSecurity", "APICondSecurity\APICondSecurity.csproj", "{9AFAD514-14CE-4E67-AA41-C8BDE863BC9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APICondSecurity", "APICondSecurity\APICondSecurity.csproj", "{9AFAD514-14CE-4E67-AA41-C8BDE863BC9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APICondSecurity.Domain", "APICondSecurity.Domain\APICondSecurity.Domain.csproj", "{C76964F2-6840-431E-8D3C-35027AD868D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APICondSecurity.Infra.Data", "APICondSecurity.Infra.Data\APICondSecurity.Infra.Data.csproj", "{F42A04F0-B33B-426A-994B-26B206356CAE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APICondSecurity.Application", "APICondSecurity.Application\APICondSecurity.Application.csproj", "{325B089A-A38E-41B2-8F07-DED9A36CA1D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APICondSecurity.Infra.Ioc", "APICondSecurity.Infra.Ioc\APICondSecurity.Infra.Ioc.csproj", "{E94247CF-3835-4257-990D-3812EC2C4982}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +23,22 @@ Global
 		{9AFAD514-14CE-4E67-AA41-C8BDE863BC9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9AFAD514-14CE-4E67-AA41-C8BDE863BC9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9AFAD514-14CE-4E67-AA41-C8BDE863BC9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C76964F2-6840-431E-8D3C-35027AD868D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C76964F2-6840-431E-8D3C-35027AD868D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C76964F2-6840-431E-8D3C-35027AD868D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C76964F2-6840-431E-8D3C-35027AD868D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F42A04F0-B33B-426A-994B-26B206356CAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F42A04F0-B33B-426A-994B-26B206356CAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F42A04F0-B33B-426A-994B-26B206356CAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F42A04F0-B33B-426A-994B-26B206356CAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{325B089A-A38E-41B2-8F07-DED9A36CA1D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{325B089A-A38E-41B2-8F07-DED9A36CA1D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{325B089A-A38E-41B2-8F07-DED9A36CA1D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{325B089A-A38E-41B2-8F07-DED9A36CA1D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E94247CF-3835-4257-990D-3812EC2C4982}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E94247CF-3835-4257-990D-3812EC2C4982}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E94247CF-3835-4257-990D-3812EC2C4982}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E94247CF-3835-4257-990D-3812EC2C4982}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,6 @@
-﻿using APICondSecurity.DTOs;
-using APICondSecurity.Models;
-using APICondSecurity.Repositories;
+﻿using APICondSecurity.Application.DTOs;
+using APICondSecurity.Infra.Data.Models;
+using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,12 +40,12 @@ namespace APICondSecurity.Controllers
         [HttpPut("Alterar")]
         public async Task<ActionResult> UpdateRegistros(RegistrosDTO registrosDTO)
         {
-            if ( registrosDTO.IdRegistros == null )
+            if (registrosDTO.IdRegistros == null)
             {
                 return BadRequest("Não é possível alterar o Registro. É necessário informar o Id.");
             }
             var registrosExiste = await _registrosRepository.Get(registrosDTO.IdRegistros);
-            if ( registrosExiste == null )
+            if (registrosExiste == null)
             {
                 return BadRequest("Registro não encontrado.");
             }
@@ -77,7 +77,7 @@ namespace APICondSecurity.Controllers
 
             try
             {
-            _registrosRepository.Alterar(registrosExiste);
+                _registrosRepository.Alterar(registrosExiste);
                 await _registrosRepository.SaveAllAsync();
                 return Ok("Registros alterada com sucesso");
             }

@@ -1,6 +1,6 @@
-﻿using APICondSecurity.DTOs;
-using APICondSecurity.Models;
-using APICondSecurity.Repositories;
+﻿using APICondSecurity.Application.DTOs;
+using APICondSecurity.Infra.Data.Models;
+using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,7 +37,7 @@ namespace APICondSecurity.Controllers
         [HttpPut("Alterar")]
         public async Task<ActionResult> UpdatePortao(PortaoDTO portaoDTO)
         {
-            if (portaoDTO.IdPortao == null) 
+            if (portaoDTO.IdPortao == null)
             {
                 return BadRequest("Não é possivel alterar o portão. É necessário informar o Id.");
             }

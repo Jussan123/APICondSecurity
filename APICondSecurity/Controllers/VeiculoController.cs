@@ -1,6 +1,6 @@
-﻿using APICondSecurity.DTOs;
-using APICondSecurity.Models;
-using APICondSecurity.Repositories;
+﻿using APICondSecurity.Application.DTOs;
+using APICondSecurity.Infra.Data.Models;
+using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,7 +38,7 @@ namespace APICondSecurity.Controllers
         [HttpPut("Alterar")]
         public async Task<ActionResult> UpdateVeiculo(VeiculoDTO veiculoDTO)
         {
-            if (veiculoDTO.IdVeiculo == null) 
+            if (veiculoDTO.IdVeiculo == null)
             {
                 return BadRequest("não é possível alterar o veículo. É necessário informar o Id.");
             }

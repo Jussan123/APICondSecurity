@@ -1,5 +1,6 @@
-﻿using APICondSecurity.Models;
-using APICondSecurity.Repositories;
+﻿using APICondSecurity.Application.DTOs;
+using APICondSecurity.Infra.Data.Repositories;
+using APICondSecurity.Infra.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers

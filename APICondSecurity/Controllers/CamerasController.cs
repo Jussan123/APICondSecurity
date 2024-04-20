@@ -1,10 +1,8 @@
-﻿using APICondSecurity.DTOs;
-using APICondSecurity.Models;
-using APICondSecurity.Repositories;
+﻿using APICondSecurity.Application.DTOs;
+using APICondSecurity.Infra.Data.Models;
+using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace APICondSecurity.Controllers
 {
@@ -45,7 +43,7 @@ namespace APICondSecurity.Controllers
             }
 
             var cameraExiste = await _cameraRepository.Get(cameraDTO.IdCamera);
-           
+
             if (cameraExiste == null)
             {
                 return NotFound("Camera não identificada.");

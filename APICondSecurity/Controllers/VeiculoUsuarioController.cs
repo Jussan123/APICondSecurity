@@ -1,6 +1,6 @@
-﻿using APICondSecurity.DTOs;
-using APICondSecurity.Models;
-using APICondSecurity.Repositories;
+﻿using APICondSecurity.Application.DTOs;
+using APICondSecurity.Infra.Data.Models;
+using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -43,7 +43,7 @@ namespace APICondSecurity.Controllers
                 return BadRequest("Não é possível alterar o veículo do usuário. É necessário informar o Id.");
             }
             var veiculoUsuarioExiste = await _veiculoUsuarioRepository.Get(veiculoUsuarioDTO.IdVeiculoUsuario);
-            if (veiculoUsuarioDTO ==  null)
+            if (veiculoUsuarioDTO == null)
             {
                 return NotFound("Veiculo do Usuário não encontrado.");
             }
