@@ -9,16 +9,16 @@ namespace APICondSecurity.Infra.Ioc
         {
             services.AddSwaggerGen(c =>
             {
-                c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme()
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
                 {
-                    Name = "Autorization",
-                    Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
                     BearerFormat = "JWT",
-                    In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+                    In = ParameterLocation.Header,
                     Description = "Token de autenticação.",
                 }); ;
 
-                c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement()
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
                 {
                     {
                         new OpenApiSecurityScheme()

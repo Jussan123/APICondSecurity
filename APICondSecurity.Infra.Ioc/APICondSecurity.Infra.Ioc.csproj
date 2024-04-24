@@ -7,8 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\APICondSecurity.Application\APICondSecurity.Application.csproj" />
-    <ProjectReference Include="..\APICondSecurity.Domain\APICondSecurity.Domain.csproj" />
     <ProjectReference Include="..\APICondSecurity.Infra.Data\APICondSecurity.Infra.Data.csproj" />
   </ItemGroup>
 

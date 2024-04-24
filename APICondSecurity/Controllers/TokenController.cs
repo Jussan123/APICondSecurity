@@ -1,4 +1,4 @@
-﻿using APICondSecurity.Application.DTOs;
+﻿using APICondSecurity.DTOs;
 using APICondSecurity.Infra.Data.Repositories;
 using APICondSecurity.Infra.Data.Models;
 using Microsoft.AspNetCore.Mvc;
