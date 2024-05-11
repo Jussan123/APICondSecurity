@@ -1,4 +1,5 @@
 ﻿using APICondSecurity.DTOs;
+using APICondSecurity.Infra.Data.Interfaces;
 using APICondSecurity.Infra.Data.Models;
 using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
@@ -10,6 +11,7 @@ namespace APICondSecurity.Controllers
     [Route("api/[controller]")]
     public class UsuarioController : Controller
     {
+        private readonly IUsuarioService _usuarioService;
         private readonly UsuarioRepository _usuarioRepository;
         private readonly IMapper _mapper;
         public UsuarioController(UsuarioRepository usuarioRepository, IMapper mapper)
@@ -68,11 +70,11 @@ namespace APICondSecurity.Controllers
         public async Task<ActionResult> Delete(int IdUsuario)
         {
             var usuario = _usuarioRepository.Get(IdUsuario);
-            if (usuario == null)
+            if (usuario != null)
             {
-                return NotFound("Id da usuario não encontrado.");
+            _usuarioRepository.ExcluirUser(await usuario);
             }
-            _usuarioRepository.Excluir(await usuario);
+            return NotFound("Id da usuario não encontrado.");
             try
             {
                 await _usuarioRepository.SaveAllAsync();

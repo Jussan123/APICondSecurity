@@ -5,9 +5,9 @@ VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APICondSecurity", "APICondSecurity\APICondSecurity.csproj", "{9AFAD514-14CE-4E67-AA41-C8BDE863BC9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APICondSecurity.Infra.Data", "APICondSecurity.Infra.Data\APICondSecurity.Infra.Data.csproj", "{F42A04F0-B33B-426A-994B-26B206356CAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APICondSecurity.Infra.Data", "APICondSecurity.Infra.Data\APICondSecurity.Infra.Data.csproj", "{F42A04F0-B33B-426A-994B-26B206356CAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APICondSecurity.Infra.Ioc", "APICondSecurity.Infra.Ioc\APICondSecurity.Infra.Ioc.csproj", "{E94247CF-3835-4257-990D-3812EC2C4982}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APICondSecurity.Infra.Ioc", "APICondSecurity.Infra.Ioc\APICondSecurity.Infra.Ioc.csproj", "{E94247CF-3835-4257-990D-3812EC2C4982}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

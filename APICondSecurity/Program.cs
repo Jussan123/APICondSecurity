@@ -1,6 +1,6 @@
 using APICondSecurity.Infra.Ioc;
 using APICondSecurity.Infra.Data.Context;
-using APICondSecurity.Application.Mappings;
+using APICondSecurity;
 using APICondSecurity.Infra.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 
