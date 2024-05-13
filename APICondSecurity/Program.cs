@@ -34,6 +34,7 @@ builder.Services.AddScoped<RegistrosRepository>();
 builder.Services.AddScoped<ResidenciaRepository>();
 builder.Services.AddScoped<RfidRepository>();
 builder.Services.AddScoped<TipoUsuarioRepository>();
+builder.Services.AddScoped<UfRepository>();
 builder.Services.AddScoped<UsuarioRepository>();
 builder.Services.AddScoped<VeiculoRepository>();
 builder.Services.AddScoped<VeiculoUsuarioRepository>();

@@ -23,16 +23,16 @@ namespace APICondSecurity.Controllers
         [HttpPost("Cadastrar")]
         public async Task<ActionResult> CadastrarUsuario(UsuarioDTO usuarioDTO)
         {
-            var usuario = _mapper.Map<Usuario>(usuarioDTO);
-            _usuarioRepository.Incluir(usuario);
             try
             {
+                var usuario = _mapper.Map<Usuario>(usuarioDTO);
+                await _usuarioRepository.Incluir(usuario);
                 await _usuarioRepository.SaveAllAsync();
-                return Ok("Usuario cadastrada com sucesso!");
+                return Ok("Usuario cadastrado com sucesso!");
             }
             catch (Exception ex)
             {
-                return BadRequest($"Ocorreu um erro ao salvar a usuario: {ex.Message}");
+                return BadRequest($"Ocorreu um erro ao salvar o usuario: {ex.Message}");
             }
         }
 
@@ -72,18 +72,18 @@ namespace APICondSecurity.Controllers
             var usuario = _usuarioRepository.Get(IdUsuario);
             if (usuario != null)
             {
-            _usuarioRepository.ExcluirUser(await usuario);
+                _usuarioRepository.ExcluirUser(await usuario);
+                try
+                {
+                    await _usuarioRepository.SaveAllAsync();
+                    return Ok("Usuario excluída com sucesso.");
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest($"Ocorreu um erro ao excluir a usuario: {ex.Message}");
+                }
             }
             return NotFound("Id da usuario não encontrado.");
-            try
-            {
-                await _usuarioRepository.SaveAllAsync();
-                return Ok("Usuario excluída com sucesso.");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Ocorreu um erro ao excluir a usuario: {ex.Message}");
-            }
         }
 
         [HttpGet("Get")]

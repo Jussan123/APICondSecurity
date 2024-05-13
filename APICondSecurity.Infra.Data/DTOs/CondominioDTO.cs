@@ -12,7 +12,10 @@ namespace APICondSecurity.Infra.Data.DTOs
         public string Nome { get; set; }
 
         [Required]
-        [MaxLength(1)]
-        public char Situacao { get; set; }
+        [StringLength(2)]
+        public string Situacao { get; set; }
+
+        [Required]
+        public int IdEndereco { get; set; }
     }
 }

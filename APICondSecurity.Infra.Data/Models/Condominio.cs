@@ -21,8 +21,8 @@ public partial class Condominio
     public string Nome { get; set; }
 
     [Column("situacao")]
-    [MaxLength(1)]
-    public char Situacao { get; set; }
+    [StringLength(2)]
+    public string Situacao { get; set; }
 
     [Column("id_endereco")]
     public int IdEndereco { get; set; }
