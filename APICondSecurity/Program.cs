@@ -3,6 +3,8 @@ using APICondSecurity.Infra.Data.Context;
 using APICondSecurity;
 using APICondSecurity.Infra.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
+using APICondSecurity.Infra.Data.Identity;
+using APICondSecurity.Infra.Data.Account;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +40,8 @@ builder.Services.AddScoped<UfRepository>();
 builder.Services.AddScoped<UsuarioRepository>();
 builder.Services.AddScoped<VeiculoRepository>();
 builder.Services.AddScoped<VeiculoUsuarioRepository>();
+builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<IAuthenticate, AuthenticateService>();
 
 var app = builder.Build();
 

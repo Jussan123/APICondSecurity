@@ -24,5 +24,6 @@ public class EntitiesToDTOMappingProfile : Profile
         CreateMap<Usuario, UsuarioDTO>().ReverseMap();
         CreateMap<VeiculoTerceiro, VeiculoTerceiroDTO>().ReverseMap();
         CreateMap<VeiculoUsuario, VeiculoUsuarioDTO>().ReverseMap();
+        CreateMap<User, UserDTO>().ReverseMap();
     }
 }

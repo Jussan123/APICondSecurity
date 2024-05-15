@@ -25,8 +25,10 @@ public partial class Usuario
     [StringLength(50)]
     public string Email { get; set; }
 
-    public byte[] SenhaHash { get; set; }
-    public byte[] SenhaSalt { get; set; }
+    [Required]
+    [Column("senha")]
+    [StringLength(255)]
+    public string Senha { get; set; }
 
     [Column("telefone")]
     [StringLength(255)]

@@ -1,6 +1,7 @@
 ﻿using APICondSecurity.Infra.Data.Context;
 using APICondSecurity.Infra.Data.Repositories;
 using APICondSecurity.Infra.Data.Interfaces;
+using APICondSecurity.Infra.Data.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using APICondSecurity.Infra.Data.Services;
+using APICondSecurity.Infra.Data.Account;
 
 
 namespace APICondSecurity.Infra.Ioc
@@ -43,8 +45,12 @@ namespace APICondSecurity.Infra.Ioc
                 };
             });
             Services.AddAutoMapper(typeof(EntitiesToDTOMappingProfile));
-            Services.AddScoped<IUsuario, UsuarioRepository>();
-            Services.AddScoped<IUsuarioService, UsuarioService>();
+            //repositories
+            Services.AddScoped<IUser, UserRepository>();
+            
+            //services
+            Services.AddScoped<IUserService, UserService>();
+            Services.AddScoped<IAuthenticate, AuthenticateService>();
             return Services;
         }
     }

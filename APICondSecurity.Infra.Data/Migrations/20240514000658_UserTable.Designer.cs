@@ -3,6 +3,7 @@ using System;
 using APICondSecurity.Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace APICondSecurity.Migrations
 {
     [DbContext(typeof(condSecurityContext))]
-    partial class condSecurityContextModelSnapshot : ModelSnapshot
+    [Migration("20240514000658_UserTable")]
+    partial class UserTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -464,14 +467,6 @@ namespace APICondSecurity.Migrations
                     b.Property<byte[]>("senhaSalt")
                         .IsRequired()
                         .HasColumnType("bytea");
-
-                    b.Property<string>("situacao")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("telefone")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.HasKey("id_user")
                         .HasName("user_pkey");

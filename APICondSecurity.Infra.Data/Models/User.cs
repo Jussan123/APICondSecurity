@@ -6,13 +6,15 @@ using System.Threading.Tasks;
 
 namespace APICondSecurity.Infra.Data.Models
 {
-    internal class User
+    public class User
     {
         public int id_user {  get; private set; }
         public string name { get; private set; }
         public string email { get; private set; }
         public byte[] senhaHash { get; private set; }
         public byte[] senhaSalt { get; private set; }
+        public string telefone {  get; private set; }
+        public string situacao { get; private set; }
 
         public User(int id_user, string name, string email)
         {
@@ -33,6 +35,5 @@ namespace APICondSecurity.Infra.Data.Models
             this.senhaSalt = senhaSalt;
         }
 
-        
     }
 }

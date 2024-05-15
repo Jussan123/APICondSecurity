@@ -11,7 +11,7 @@ namespace APICondSecurity.Controllers
     [Route("api/[controller]")]
     public class UsuarioController : Controller
     {
-        private readonly IUsuarioService _usuarioService;
+        private readonly IUserService _usuarioService;
         private readonly UsuarioRepository _usuarioRepository;
         private readonly IMapper _mapper;
         public UsuarioController(UsuarioRepository usuarioRepository, IMapper mapper)
