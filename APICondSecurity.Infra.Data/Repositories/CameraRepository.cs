@@ -1,7 +1,7 @@
 ﻿using APICondSecurity.Infra.Data.Context;
+using APICondSecurity.Infra.Data.Interfaces;
 using APICondSecurity.Infra.Data.Models;
 using Microsoft.EntityFrameworkCore;
-using APICondSecurity.Infra.Data.Interfaces;
 
 
 namespace APICondSecurity.Infra.Data.Repositories

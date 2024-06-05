@@ -1,33 +1,44 @@
-﻿using APICondSecurity.Infra.Data.Account;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using APICondSecurity.Infra.Data.Models;
+using APICondSecurity.Infra.Data.Account;
 using APICondSecurity.Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace APICondSecurity.Infra.Data.Identity
 {
-    public class AuthenticateService(condSecurityContext context, IConfiguration configuration) : IAuthenticate
+    public class AuthenticateService : IAuthenticate
     {
-        private readonly condSecurityContext _context = context;
-        private readonly IConfiguration _configuration = configuration;
+        private readonly condSecurityContext _context;
+        private readonly IConfiguration _configuration;
+
+        public AuthenticateService(condSecurityContext context, IConfiguration configuration)
+        {
+            _context = context;
+            _configuration = configuration;
+        }
 
         public async Task<bool> AuthenticateAsync(string email, string senha)
         {
-            var user = await _context.User.Where(x => x.Email.Equals(email, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefaultAsync();
+            var user = await _context.User.Where(x => x.email.ToLower() == email.ToLower()).FirstOrDefaultAsync();
             if (user == null)
             {
                 return false;
             }
 
-            using var hmac = new HMACSHA512(user.SenhaSalt);
+            using var hmac = new HMACSHA512(user.senhaSalt);
             var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(senha));
             for (int x = 0; x < computedHash.Length; x++)
             {
-                if (computedHash[x] != user.SenhaHash[x]) return false;
+                if (computedHash[x] != user.senhaHash[x]) return false;
             }
             return true;
         }
@@ -46,7 +57,7 @@ namespace APICondSecurity.Infra.Data.Identity
             var credentials = new SigningCredentials(privateKey, SecurityAlgorithms.HmacSha256);
             var expiration = DateTime.UtcNow.AddMinutes(10);
 
-            JwtSecurityToken token = new(
+            JwtSecurityToken token = new JwtSecurityToken(
                 issuer: _configuration["jwt:issuer"],
                 audience: _configuration["jwt:audience"],
                 claims: claims,
@@ -59,7 +70,7 @@ namespace APICondSecurity.Infra.Data.Identity
 
         public async Task<bool> UserExists(string email)
         {
-            var user = await _context.User.Where(x => x.Email.Equals(email, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefaultAsync();
+            var user = await _context.User.Where(x => x.email.ToLower() == email.ToLower()).FirstOrDefaultAsync();
             if (user == null)
             {
                 return false;

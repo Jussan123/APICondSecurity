@@ -12,7 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 
-namespace APICondSecurity.Infra.Ioc
+namespace APICondSecurity
 {
     public static class DependencyInjection
     {

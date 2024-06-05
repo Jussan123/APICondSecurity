@@ -187,7 +187,7 @@ public partial class condSecurityContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.id_user).HasName("user_pkey");
+            entity.HasKey(e => e.Id_user).HasName("user_pkey");
         });
 
         modelBuilder.Entity<Veiculo>(entity =>

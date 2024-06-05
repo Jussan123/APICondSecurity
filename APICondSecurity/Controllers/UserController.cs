@@ -1,9 +1,11 @@
-﻿using APICondSecurity.Models;
-using APICondSecurity.Infra.Data.DTOs;
-using APICondSecurity.Infra.Data.Repositories;
+﻿using APICondSecurity.DTOs;
+using APICondSecurity.Infra.Data.Models;
+using APICondSecurity.Services;
+using APICondSecurity.Identity;
 using Microsoft.AspNetCore.Mvc;
-using APICondSecurity.Account;
-using APICondSecurity.Infra.Data.Interfaces;
+using APICondSecurity.Infra.Data.Repositories;
+using AutoMapper;
+using System.Text;
 
 namespace APICondSecurity.Controllers
 {
@@ -11,12 +13,12 @@ namespace APICondSecurity.Controllers
     [Route("api/[controller]")]
     public class UserController : Controller
     {
-        private readonly IAuthenticate _authenticateService;
-        private readonly IUserService _userService;
+        private readonly UserRepository _userService;
+        private readonly IMapper _mapper;
 
-        public UserController(IAuthenticate authenticateService, IUserService userService)
+        public UserController(UserRepository userService, IMapper mapper)
         {
-            _authenticateService = authenticateService;
+            _mapper = mapper;
             _userService = userService;
         }
 
@@ -28,23 +30,68 @@ namespace APICondSecurity.Controllers
                 return BadRequest("Dados inválidos.");
             }
 
-            var emailExiste = await _authenticateService.UserExists(userDTO.Email);
-            if (emailExiste) 
+            var emailExiste = await _userService.UserExists(userDTO.Email);
+            if (emailExiste)
             {
                 return BadRequest("Este E-mail já possui um cadastro em nosso sistema.");
             }
-            
-            var user = await _userService.Incluir(userDTO);
-            if (user == null)
+
+            var user = _mapper.Map<User>(userDTO);
+
+            user.SenhaSalt = [10];
+            user.SenhaHash = Encoding.ASCII.GetBytes(userDTO.Senha);
+            user.CpfSalt = [10];
+            user.CpfHash = Encoding.ASCII.GetBytes(userDTO.Cpf);
+
+            var userN = await _userService.Incluir(user);
+            if (userN == null)
             {
                 return BadRequest("Ocorreu um erro ao cadastrar o usuário.");
             }
 
-            var token = _authenticateService.GenerateToken(userDTO.IdUser, userDTO.Email);
+            var token = _userService.GenerateToken(userN.Id_user, userN.Email);
             return new UserToken
             {
                 Token = token
             };
         }
+
+        [HttpPost("loginApp")]
+        public async Task<ActionResult<UserToken>> LoginApp(UserLoginDTO loginDTO)
+        {
+            if (loginDTO == null || string.IsNullOrEmpty(loginDTO.Email) || string.IsNullOrEmpty(loginDTO.Senha))
+            {
+                return BadRequest("Email e Senha são obrigatórios.");
+            }
+
+            var user = await _userService.Login(loginDTO.Email, loginDTO.Senha);
+            if (user == null)
+            {
+                return BadRequest("Usuário não encontrado.");
+            }
+
+            var token = _userService.GenerateToken(user.Id_user, user.Email);
+            return new UserToken
+            {
+                Token = token
+            };
+        }
+        /*
+        [HttpGet("loginAplicacoes")]
+        public async Task<bool> LoginAplicacoes(string email, string senha, string token)
+        {
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(senha) || string.IsNullOrEmpty(token))
+            {
+                return false;
+            }
+
+            var user = await _userService.LoginAplicacoes(email, senha, token);
+            if (user == null)
+            {
+                return false;
+            }
+
+            return true;
+        } */
     }
 }

@@ -3,6 +3,7 @@ using System;
 using APICondSecurity.Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace APICondSecurity.Migrations
 {
     [DbContext(typeof(condSecurityContext))]
-    partial class condSecurityContextModelSnapshot : ModelSnapshot
+    [Migration("20240603141117_userAjustes")]
+    partial class userAjustes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -495,12 +498,6 @@ namespace APICondSecurity.Migrations
                         .HasColumnName("id_usuario");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("IdUsuario"));
-
-                    b.Property<string>("Cpf")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("cpf");
 
                     b.Property<string>("Email")
                         .IsRequired()

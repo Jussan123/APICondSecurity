@@ -8,7 +8,46 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Account\Identity\**" />
+    <Compile Remove="EntityFrameworkCore\**" />
+    <Compile Remove="Interfaces\**" />
+    <Compile Remove="Mappings\**" />
+    <Compile Remove="Migrations\**" />
+    <Compile Remove="Models\**" />
+    <Compile Remove="Repositories\**" />
+    <Compile Remove="Validation\**" />
+    <Content Remove="Account\Identity\**" />
+    <Content Remove="EntityFrameworkCore\**" />
+    <Content Remove="Interfaces\**" />
+    <Content Remove="Mappings\**" />
+    <Content Remove="Migrations\**" />
+    <Content Remove="Models\**" />
+    <Content Remove="Repositories\**" />
+    <Content Remove="Validation\**" />
+    <EmbeddedResource Remove="Account\Identity\**" />
+    <EmbeddedResource Remove="EntityFrameworkCore\**" />
+    <EmbeddedResource Remove="Interfaces\**" />
+    <EmbeddedResource Remove="Mappings\**" />
+    <EmbeddedResource Remove="Migrations\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <EmbeddedResource Remove="Repositories\**" />
+    <EmbeddedResource Remove="Validation\**" />
+    <None Remove="Account\Identity\**" />
+    <None Remove="EntityFrameworkCore\**" />
+    <None Remove="Interfaces\**" />
+    <None Remove="Mappings\**" />
+    <None Remove="Migrations\**" />
+    <None Remove="Models\**" />
+    <None Remove="Repositories\**" />
+    <None Remove="Validation\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <_ContentIncludedByDefault Remove="efpt.config.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Mappings\EntitiesToDTOMappingProfile.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,10 +69,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\APICondSecurity.Infra.Ioc\APICondSecurity.Infra.Ioc.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Validation\" />
   </ItemGroup>
 
 </Project>

@@ -8,18 +8,13 @@ namespace APICondSecurity.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class RegistrosController : Controller
+    public class RegistrosController(RegistrosRepository registrosRepository, IMapper mapper) : Controller, IRegistrosController
     {
-        private readonly RegistrosRepository _registrosRepository;
+        private readonly RegistrosRepository _registrosRepository = registrosRepository;
         private readonly UsuarioRepository _usuarioRepository;
         private readonly VeiculoRepository _veiculoRepository;
         private readonly PortaoRepository _portaoRepository;
-        private readonly IMapper _mapper;
-        public RegistrosController(RegistrosRepository registrosRepository, IMapper mapper)
-        {
-            _mapper = mapper;
-            _registrosRepository = registrosRepository;
-        }
+        private readonly IMapper _mapper = mapper;
 
         [HttpPost("Cadastrar")]
         public async Task<ActionResult> CadastrarRegistros(RegistrosDTO registrosDTO)

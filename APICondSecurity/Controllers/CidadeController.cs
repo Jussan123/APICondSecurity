@@ -8,15 +8,10 @@ namespace APICondSecurity.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CidadeController : Controller
+    public class CidadeController(CidadeRepository cidadeRepository, IMapper mapper) : Controller
     {
         private readonly CidadeRepository _cidadeRepository;
-        private readonly IMapper _mapper;
-        public CidadeController(CidadeRepository cidadeRepository, IMapper mapper)
-        {
-            _mapper = mapper;
-            _cidadeRepository = cidadeRepository;
-        }
+        private readonly IMapper _mapper = mapper;
 
         [HttpPost("Cadastrar")]
         public async Task<ActionResult> CadastrarCidade(CidadeDTO cidadeDTO)

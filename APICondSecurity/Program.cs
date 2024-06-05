@@ -1,10 +1,10 @@
-using APICondSecurity.Infra.Ioc;
-using APICondSecurity.Infra.Data.Context;
 using APICondSecurity;
+using APICondSecurity.Infra.Data.Context;
 using APICondSecurity.Infra.Data.Repositories;
+using APICondSecurity.Services;
+using APICondSecurity.Infra.Ioc;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using APICondSecurity.Infra.Data.Identity;
-using APICondSecurity.Infra.Data.Account;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +25,10 @@ builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
 builder.Services.AddInfrastructureSwagger();
 builder.Services.AddAutoMapper(typeof(EntitiesToDTOMappingProfile));
+// builder.Services.AddScoped<IAuthenticate, AuthenticateService>();
+builder.Services.AddScoped<IMapper, Mapper>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<CameraRepository>();
 builder.Services.AddScoped<CidadeRepository>();
 builder.Services.AddScoped<CondominioRepository>();
@@ -40,8 +44,9 @@ builder.Services.AddScoped<UfRepository>();
 builder.Services.AddScoped<UsuarioRepository>();
 builder.Services.AddScoped<VeiculoRepository>();
 builder.Services.AddScoped<VeiculoUsuarioRepository>();
-builder.Services.AddScoped<UserRepository>();
-builder.Services.AddScoped<IAuthenticate, AuthenticateService>();
+builder.Services.AddScoped<VeiculoTerceiroRepository>();
+
+
 
 var app = builder.Build();
 

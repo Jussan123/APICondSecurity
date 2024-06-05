@@ -1,6 +1,6 @@
 ﻿using APICondSecurity.Infra.Data.Models;
+using APICondSecurity.DTOs;
 using AutoMapper;
-using APICondSecurity.Infra.Data.DTOs;
 
 namespace APICondSecurity;
 
@@ -25,5 +25,6 @@ public class EntitiesToDTOMappingProfile : Profile
         CreateMap<VeiculoTerceiro, VeiculoTerceiroDTO>().ReverseMap();
         CreateMap<VeiculoUsuario, VeiculoUsuarioDTO>().ReverseMap();
         CreateMap<User, UserDTO>().ReverseMap();
+
     }
 }

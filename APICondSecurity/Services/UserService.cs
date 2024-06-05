@@ -1,40 +1,32 @@
 ﻿using APICondSecurity.Infra.Data.Context;
-using APICondSecurity.Infra.Data.DTOs;
 using APICondSecurity.Infra.Data.Interfaces;
 using APICondSecurity.Infra.Data.Models;
 using AutoMapper;
-using AutoMapper.Internal.Mappers;
 using Microsoft.EntityFrameworkCore;
 
-
-namespace APICondSecurity.Infra.Data.Services
+namespace APICondSecurity.Services
 {
     public class UserService : IUserService
     {
         private readonly condSecurityContext _context;
         public readonly IUser _repository;
-        public readonly IMapper _mapper;
 
-       //public UserService(IUser repository, IMapper mapper)
-       //{
-       //    _repository = repository;
-       //    _mapper = mapper;
-       //}
-
-         public UserService(condSecurityContext context, IMapper mapper, IUser repository)
+         public UserService(condSecurityContext context)
          {
             _context = context;
-            _mapper = mapper;
+         }
+
+        public UserService(IUser repository)
+        {
             _repository = repository;
         }
-        
-        public async Task<UserDTO> Alterar(UserDTO userDTO)
+
+        public async Task<User> Alterar(User user)
         {
             try
             {
-
-                _context.Entry(userDTO).State = EntityState.Modified;
-                return _mapper.Map<UserDTO>(userDTO);
+                _context.Entry(user).State = EntityState.Modified;
+                return user;
             }
             catch (Exception ex)
             {
@@ -44,12 +36,12 @@ namespace APICondSecurity.Infra.Data.Services
 
         }
 
-        public async Task<UserDTO> Excluir(int idUserDTO)
+        public async Task<bool> Excluir(int idUserDTO)
         {
             try
             {
                 var userExcluido = await _repository.Excluir(idUserDTO);
-                return _mapper.Map<UserDTO>(userExcluido);
+                return true;
             }
             catch (Exception ex)
             {
@@ -58,14 +50,14 @@ namespace APICondSecurity.Infra.Data.Services
             }
         }
 
-        public async Task<UserDTO> Incluir(UserDTO userDTO)
+        public async Task<User> Incluir(User user)
         {
             try
             {
-                var user = _mapper.Map<User>(userDTO);
-                var userIncluido = await _repository.Incluir(user);
+
+                _context.User.Add(user);
                 _context.SaveChanges();
-                return _mapper.Map<UserDTO>(userIncluido);
+                return user;
             }
             catch (Exception ex)
             {
@@ -88,27 +80,25 @@ namespace APICondSecurity.Infra.Data.Services
             }
         }
 
-        public async Task<UserDTO> Get(int IdUser)
+        public async Task<User> Get(int IdUser)
         {
             try
             {
-                var user = await _repository.Get(IdUser);
-                return _mapper.Map<UserDTO>(user);
+                return await _context.User.FirstOrDefaultAsync(c => c.Id_user == IdUser);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                Console.WriteLine($"Erro ao buscar userDTO: {ex.Message}");
+                Console.WriteLine($"Erro ao buscar user: {ex.Message}");
                 throw;
             }
         }
 
-        public async Task<IEnumerable<UserDTO>> GetAll()
+        public async Task<IEnumerable<User>> GetAll()
         {
             try
             {
-                var users = await _repository.GetAll();
-                return _mapper.Map<IEnumerable<UserDTO>>(users);
+                return await _context.User.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -117,13 +107,12 @@ namespace APICondSecurity.Infra.Data.Services
             }
         }
 
-        public async Task<UserDTO> ExcluirUserDTO(UserDTO userDTO)
+        public async Task<bool> ExcluirUser(User user)
         {
             try
             {
-                var user = _mapper.Map<User>(userDTO);
-                var userDTOExcluido = await _repository.ExcluirUser(user);
-                return _mapper.Map<UserDTO>(userDTOExcluido);
+                var userExcluido = await _repository.ExcluirUser(user);
+                return userExcluido;
             }
             catch (Exception ex)
             {
@@ -132,12 +121,12 @@ namespace APICondSecurity.Infra.Data.Services
             }
         }
 
-        public async Task<UserDTO> Login(string email, string senha)
+        public async Task<User> Login(string email, string senha)
        {
             try
             {
                 var user = await _repository.Login(email, senha);
-                return _mapper.Map<UserDTO>(user);
+                return user;
             }
             catch (Exception ex)
             {
@@ -145,5 +134,19 @@ namespace APICondSecurity.Infra.Data.Services
                 throw;
             }
         }
+
+        /*public async Task<User> LoginAplicacoes(string email, string senha, string token)
+        {
+            try
+            {
+                var user = await IUserService.LoginAplicacoes(email, senha, token);
+                return _mapper.Map<User>(user);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }*/
     }
 }

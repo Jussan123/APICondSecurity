@@ -15,7 +15,6 @@ namespace APICondSecurity.DTOs
         [StringLength(2)]
         public string Situacao { get; set; }
 
-        [Required]
         public int IdEndereco { get; set; }
     }
 }

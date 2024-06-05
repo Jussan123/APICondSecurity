@@ -6,8 +6,8 @@ namespace APICondSecurity.Infra.Data.Interfaces
     {
         Task<Usuario> Incluir(Usuario usuario);
         Task<Usuario> Alterar(Usuario usuario);
-        Task<Usuario> Excluir(int idUsuario);
-        Task<Usuario> ExcluirUser(Usuario usuario);
+        Task<bool> Excluir(int idUsuario);
+        Task<bool> ExcluirUser(Usuario usuario);
         Task<Usuario> Get(int id);
         Task<IEnumerable<Usuario>> GetAll();
         Task<bool> SaveAllAsync();

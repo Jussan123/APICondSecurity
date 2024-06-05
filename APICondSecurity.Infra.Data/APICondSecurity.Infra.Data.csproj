@@ -7,7 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\UserToken.cs" />
+    <Compile Remove="Account\**" />
+    <Compile Remove="DTOs\**" />
+    <Compile Remove="Identity\**" />
+    <Compile Remove="Mappings\**" />
+    <Compile Remove="Services\**" />
+    <EmbeddedResource Remove="Account\**" />
+    <EmbeddedResource Remove="DTOs\**" />
+    <EmbeddedResource Remove="Identity\**" />
+    <EmbeddedResource Remove="Mappings\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <None Remove="Account\**" />
+    <None Remove="DTOs\**" />
+    <None Remove="Identity\**" />
+    <None Remove="Mappings\**" />
+    <None Remove="Services\**" />
   </ItemGroup>
 
   <ItemGroup>

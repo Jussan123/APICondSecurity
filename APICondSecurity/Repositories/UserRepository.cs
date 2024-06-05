@@ -1,5 +1,5 @@
 ﻿using APICondSecurity.Infra.Data.Context;
-using APICondSecurity.Infra.Data.Interfaces;
+using APICondSecurity.Interfaces;
 using APICondSecurity.Infra.Data.Models;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -38,12 +38,12 @@ namespace APICondSecurity.Repositories
 
         }
 
-        public async Task<User> Excluir(int idUser)
+        public async Task<bool> Excluir(int idUser)
         {
             try
             {
                 var userExcluido = await _repository.Excluir(idUser);
-                return _mapper.Map<User>(userExcluido);
+                return true;
             }
             catch (Exception ex)
             {
@@ -85,10 +85,8 @@ namespace APICondSecurity.Repositories
         {
             try
             {
-#pragma warning disable CS8603 // Possível retorno de referência nula.
-                return await _context.User.FirstOrDefaultAsync(c => c.id_user == IdUser);
-#pragma warning restore CS8603 // Possível retorno de referência nula.
-            }
+                return await _context.User.FirstOrDefaultAsync(c => c.Id_user == IdUser);
+}
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
@@ -110,16 +108,49 @@ namespace APICondSecurity.Repositories
             }
         }
 
-        public async Task<User> ExcluirUser(User user)
+        public async Task<bool> ExcluirUser(User user)
         {
             try
             {
                 var userExcluido = await _repository.ExcluirUser(user);
-                return _mapper.Map<User>(userExcluido);
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString(), ex.Message);
+                throw;
+            }
+        }
+
+        internal void Incluir(Models.User usuario)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<User> Login(string email, string senha)
+        {
+            try
+            {
+                var user = await _repository.Login(email, senha);
+                return _mapper.Map<User>(user);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<User> Login(string Email, string Senha)
+        {
+            try
+            {
+                var user = await _repository.Login(Email, Senha);
+                return _mapper.Map<User>(user);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
                 throw;
             }
         }

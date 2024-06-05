@@ -9,14 +9,8 @@ namespace APICondSecurity.Infra.Data.Repositories
     public class UsuarioRepository : IUsuario
     {
         private readonly condSecurityContext _context;
-        public readonly IUsuario _repository;
-        public readonly IMapper _mapper;
-
-        public UsuarioRepository(IUsuario repository, IMapper mapper)
-        {
-            _repository = repository;
-            _mapper = mapper;
-        }
+        public readonly IUsuario _repository; // SEMPRE NULO
+        public readonly IMapper _mapper; // SEMPRE NULO
 
         public UsuarioRepository(condSecurityContext context)
         {
@@ -28,7 +22,7 @@ namespace APICondSecurity.Infra.Data.Repositories
             try
             {
                 _context.Entry(usuario).State = EntityState.Modified;
-                return _mapper.Map<Usuario>(usuario);
+                return usuario;
             }
             catch (Exception ex)
             {
@@ -38,12 +32,12 @@ namespace APICondSecurity.Infra.Data.Repositories
 
         }
 
-        public async Task<Usuario> Excluir(int idUsuario)
+        public async Task<bool> Excluir(int idUsuario)
         {
             try
             {
                 var usuarioExcluido = await _repository.Excluir(idUsuario);
-                return _mapper.Map<Usuario>(usuarioExcluido);
+                return true;
             }
             catch (Exception ex)
             {
@@ -58,12 +52,12 @@ namespace APICondSecurity.Infra.Data.Repositories
             {
                 _context.Usuario.Add(usuario);
                 _context.SaveChanges();
-                return _mapper.Map<Usuario>(usuario);
+                return usuario;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                throw;
+                throw new ArgumentException( ex.Source+ ": " + ex.Message + "\n " + ex.InnerException);
             }
         }
 
@@ -85,9 +79,7 @@ namespace APICondSecurity.Infra.Data.Repositories
         {
             try
             {
-#pragma warning disable CS8603 // Possível retorno de referência nula.
                 return await _context.Usuario.FirstOrDefaultAsync(c => c.IdUsuario == IdUsuario);
-#pragma warning restore CS8603 // Possível retorno de referência nula.
             }
             catch (Exception ex)
             {
@@ -110,12 +102,12 @@ namespace APICondSecurity.Infra.Data.Repositories
             }
         }
 
-        public async Task<Usuario> ExcluirUser(Usuario usuario)
+        public async Task<bool> ExcluirUser(Usuario usuario)
         {
             try
             {
                 var usuarioExcluido = await _repository.ExcluirUser(usuario);
-                return _mapper.Map<Usuario>(usuarioExcluido);
+                return true;
             }
             catch (Exception ex)
             {

@@ -1,5 +1,4 @@
-﻿using APICondSecurity.Domain.Models;
-using APICondSecurity.Infra.Data.Models;
+﻿using APICondSecurity.Infra.Data.Models;
 
 namespace APICondSecurity.Infra.Data.Interfaces
 {

@@ -1,7 +1,7 @@
 ﻿using APICondSecurity.Infra.Data.Models;
 
 namespace APICondSecurity.Infra.Data.Interfaces
-{ 
+{
     public interface IUf
     {
         void Incluir(Uf uf);

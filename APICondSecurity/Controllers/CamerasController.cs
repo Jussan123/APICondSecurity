@@ -8,15 +8,10 @@ namespace APICondSecurity.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CamerasController : Controller
+    public class CamerasController(CameraRepository cameraRepository, IMapper mapper) : Controller
     {
-        private readonly CameraRepository _cameraRepository;
-        private readonly IMapper _mapper;
-        public CamerasController(CameraRepository cameraRepository, IMapper mapper)
-        {
-            _mapper = mapper;
-            _cameraRepository = cameraRepository;
-        }
+        private readonly CameraRepository _cameraRepository = cameraRepository;
+        private readonly IMapper _mapper = mapper;
 
         [HttpPost("Cadastrar")]
         public async Task<ActionResult> CadastrarCamera(CamerasDTO cameraDTO)
@@ -65,7 +60,7 @@ namespace APICondSecurity.Controllers
             }
         }
 
-        [HttpDelete("Excluir{id}")]
+        [HttpDelete("Excluir")]
         public async Task<ActionResult> Delete(int IdCamera)
         {
             var camera = _cameraRepository.Get(IdCamera);

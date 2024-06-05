@@ -1,5 +1,4 @@
 ﻿using APICondSecurity.DTOs;
-using APICondSecurity.Infra.Data.Interfaces;
 using APICondSecurity.Infra.Data.Models;
 using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
@@ -11,7 +10,6 @@ namespace APICondSecurity.Controllers
     [Route("api/[controller]")]
     public class UsuarioController : Controller
     {
-        private readonly IUserService _usuarioService;
         private readonly UsuarioRepository _usuarioRepository;
         private readonly IMapper _mapper;
         public UsuarioController(UsuarioRepository usuarioRepository, IMapper mapper)
