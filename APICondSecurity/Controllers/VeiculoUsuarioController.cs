@@ -1,7 +1,7 @@
-﻿using APICondSecurity.Interfaces;
-using APICondSecurity.Models;
-using APICondSecurity.Repositories;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using APICondSecurity.DTOs;
+using APICondSecurity.Infra.Data.Models;
+using APICondSecurity.Infra.Data.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
@@ -11,32 +11,58 @@ namespace APICondSecurity.Controllers
     public class VeiculoUsuarioController : Controller
     {
         private readonly VeiculoUsuarioRepository _veiculoUsuarioRepository;
-        public VeiculoUsuarioController(VeiculoUsuarioRepository veiculoUsuarioRepository)
+        private readonly RfidRepository _rfidRepository;
+        private readonly IMapper _mapper;
+        public VeiculoUsuarioController(VeiculoUsuarioRepository veiculoUsuarioRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _veiculoUsuarioRepository = veiculoUsuarioRepository;
         }
 
         [HttpPost("Cadastrar")]
-        public async Task<ActionResult> CadastrarVeiculoUsuario(VeiculoUsuario veiculoUsuario)
+        public async Task<ActionResult> CadastrarVeiculoUsuario(VeiculoUsuarioDTO veiculoUsuarioDTO)
         {
+            var veiculoUsuario = _mapper.Map<VeiculoUsuario>(veiculoUsuarioDTO);
             _veiculoUsuarioRepository.Incluir(veiculoUsuario);
             try
             {
                 await _veiculoUsuarioRepository.SaveAllAsync();
                 return Ok("VeiculoUsuario cadastrada com sucesso!");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return BadRequest($"Ocorreu um erro ao salvar a veiculoUsuario: {ex.Message}");
             }
         }
 
         [HttpPut("Alterar")]
-        public async Task<ActionResult> UpdateVeiculoUsuario(VeiculoUsuario veiculoUsuario)
+        public async Task<ActionResult> UpdateVeiculoUsuario(VeiculoUsuarioDTO veiculoUsuarioDTO)
         {
-            _veiculoUsuarioRepository.Alterar(veiculoUsuario);
+            if (veiculoUsuarioDTO.IdVeiculoUsuario == null)
+            {
+                return BadRequest("Não é possível alterar o veículo do usuário. É necessário informar o Id.");
+            }
+            var veiculoUsuarioExiste = await _veiculoUsuarioRepository.Get(veiculoUsuarioDTO.IdVeiculoUsuario);
+            if (veiculoUsuarioDTO == null)
+            {
+                return NotFound("Veiculo do Usuário não encontrado.");
+            }
+            var rfidExiste = await _rfidRepository.Get(veiculoUsuarioDTO.IdRfid);
+            if (rfidExiste.IdRfid == null)
+            {
+                return BadRequest("RFID não encontrado.");
+            }
+            var rfidcadastrado = await _veiculoUsuarioRepository.GetByRfid(rfidExiste.IdRfid);
+            if (rfidcadastrado.IdRfid != null)
+            {
+                return BadRequest("RFID já cadastrado para outro veículo");
+            }
+
+            veiculoUsuarioExiste.Placa = veiculoUsuarioDTO.Placa;
+            veiculoUsuarioExiste.IdRfid = veiculoUsuarioDTO.IdRfid;
             try
             {
+                _veiculoUsuarioRepository.Alterar(veiculoUsuarioExiste);
                 await _veiculoUsuarioRepository.SaveAllAsync();
                 return Ok("VeiculoUsuario alterada com sucesso");
             }
@@ -74,7 +100,8 @@ namespace APICondSecurity.Controllers
             {
                 return NotFound("VeiculoUsuario Não encontrada para o Id informado.");
             }
-            return Ok(veiculoUsuario);
+            var veiculoUsuarioDTO = _mapper.Map<VeiculoUsuarioDTO>(veiculoUsuario);
+            return Ok(veiculoUsuarioDTO);
         }
 
         [HttpGet("GetAll")]

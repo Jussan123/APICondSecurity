@@ -1,7 +1,7 @@
-﻿using APICondSecurity.Interfaces;
-using APICondSecurity.Models;
-using APICondSecurity.Repositories;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using APICondSecurity.DTOs;
+using APICondSecurity.Infra.Data.Models;
+using APICondSecurity.Infra.Data.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
@@ -11,32 +11,47 @@ namespace APICondSecurity.Controllers
     public class VeiculoTerceiroController : Controller
     {
         private readonly VeiculoTerceiroRepository _veiculoTerceiroRepository;
-        public VeiculoTerceiroController(VeiculoTerceiroRepository veiculoTerceiroRepository)
+        private readonly IMapper _mapper;
+
+        public VeiculoTerceiroController(VeiculoTerceiroRepository veiculoTerceiroRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _veiculoTerceiroRepository = veiculoTerceiroRepository;
         }
 
         [HttpPost("Cadastrar")]
-        public async Task<ActionResult> CadastrarVeiculoTerceiro(VeiculoTerceiro veiculoTerceiro)
+        public async Task<ActionResult> CadastrarVeiculoTerceiro(VeiculoTerceiroDTO veiculoTerceiroDTO)
         {
+            var veiculoTerceiro = _mapper.Map<VeiculoTerceiro>(veiculoTerceiroDTO);
             _veiculoTerceiroRepository.Incluir(veiculoTerceiro);
             try
             {
                 await _veiculoTerceiroRepository.SaveAllAsync();
                 return Ok("VeiculoTerceiro cadastrada com sucesso!");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return BadRequest($"Ocorreu um erro ao salvar a veiculoTerceiro: {ex.Message}");
             }
         }
 
         [HttpPut("Alterar")]
-        public async Task<ActionResult> UpdateVeiculoTerceiro(VeiculoTerceiro veiculoTerceiro)
+        public async Task<ActionResult> UpdateVeiculoTerceiro(VeiculoTerceiroDTO veiculoTerceiroDTO)
         {
-            _veiculoTerceiroRepository.Alterar(veiculoTerceiro);
+            if (veiculoTerceiroDTO.IdVeiculoTerceiro == null)
+            {
+                return BadRequest("Não é possível alterar o veículo. É necessário informar o Id.");
+            }
+            var veiculoTerceiroExiste = await _veiculoTerceiroRepository.Get(veiculoTerceiroDTO.IdVeiculoTerceiro);
+            if (veiculoTerceiroExiste == null)
+            {
+                return NotFound("Veiculo Terceiro Não identificado.");
+            }
+            veiculoTerceiroExiste.Placa = veiculoTerceiroDTO.Placa;
+
             try
             {
+                _veiculoTerceiroRepository.Alterar(veiculoTerceiroExiste);
                 await _veiculoTerceiroRepository.SaveAllAsync();
                 return Ok("VeiculoTerceiro alterada com sucesso");
             }
@@ -74,7 +89,8 @@ namespace APICondSecurity.Controllers
             {
                 return NotFound("VeiculoTerceiro Não encontrada para o Id informado.");
             }
-            return Ok(veiculoTerceiro);
+            var veiculoTerceiroDTO = _mapper.Map<VeiculoTerceiroDTO>(veiculoTerceiro);
+            return Ok(veiculoTerceiroDTO);
         }
 
         [HttpGet("GetAll")]

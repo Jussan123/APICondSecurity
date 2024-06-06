@@ -1,7 +1,7 @@
-﻿using APICondSecurity.Interfaces;
-using APICondSecurity.Models;
-using APICondSecurity.Repositories;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using APICondSecurity.DTOs;
+using APICondSecurity.Infra.Data.Models;
+using APICondSecurity.Infra.Data.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
@@ -11,38 +11,54 @@ namespace APICondSecurity.Controllers
     public class CondominioController : Controller
     {
         private readonly CondominioRepository _condominioRepository;
-        public CondominioController(CondominioRepository condominioRepository)
+        private readonly IMapper _mapper;
+        public CondominioController(CondominioRepository condominioRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _condominioRepository = condominioRepository;
         }
 
         [HttpPost("Cadastrar")]
-        public async Task<ActionResult> CadastrarCondominio(Condominio condominio)
+        public async Task<ActionResult> CadastrarCondominio(CondominioDTO condominioDTO)
         {
+            var condominio = _mapper.Map<Condominio>(condominioDTO);
             _condominioRepository.Incluir(condominio);
             try
             {
                 await _condominioRepository.SaveAllAsync();
-                return Ok("Condominio cadastrada com sucesso!");
+                return Ok("Condominio cadastrado com sucesso!");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-                return BadRequest($"Ocorreu um erro ao salvar a condominio: {ex.Message}");
+                return BadRequest($"Ocorreu um erro ao salvar o condominio: {ex.Message}");
             }
         }
 
         [HttpPut("Alterar")]
-        public async Task<ActionResult> UpdateCondominio(Condominio condominio)
+        public async Task<ActionResult> UpdateCondominio(CondominioDTO condominioDTO)
         {
-            _condominioRepository.Alterar(condominio);
+            if (condominioDTO.IdCondominio == null)
+            {
+                return BadRequest("Não é possivel alterar o condominio. É necessário informar o Id");
+            }
+
+            var condominioExiste = await _condominioRepository.Get(condominioDTO.IdCondominio);
+            if (condominioExiste == null)
+            {
+                return NotFound("Condominio não identificado");
+            }
+            condominioExiste.Nome = condominioDTO.Nome;
+            condominioExiste.Situacao = condominioDTO.Situacao;
+
             try
             {
+                _condominioRepository.Alterar(condominioExiste);
                 await _condominioRepository.SaveAllAsync();
-                return Ok("Condominio alterada com sucesso");
+                return Ok("Condominio alterado com sucesso");
             }
             catch (Exception ex)
             {
-                return BadRequest($"Erro ao alterar a condominio: {ex.Message}");
+                return BadRequest($"Erro ao alterar o condominio: {ex.Message}");
             }
         }
 
@@ -52,7 +68,7 @@ namespace APICondSecurity.Controllers
             var condominio = _condominioRepository.Get(IdCondominio);
             if (condominio == null)
             {
-                return NotFound("Id da condominio não encontrado.");
+                return NotFound("Id do condominio não encontrado.");
             }
             _condominioRepository.Excluir(await condominio);
             try
@@ -62,7 +78,7 @@ namespace APICondSecurity.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest($"Ocorreu um erro ao excluir a condominio: {ex.Message}");
+                return BadRequest($"Ocorreu um erro ao excluir o condominio: {ex.Message}");
             }
         }
 
@@ -74,7 +90,8 @@ namespace APICondSecurity.Controllers
             {
                 return NotFound("Condominio Não encontrada para o Id informado.");
             }
-            return Ok(condominio);
+            var condominioDTO = _mapper.Map<CondominioDTO>(condominio);
+            return Ok(condominioDTO);
         }
 
         [HttpGet("GetAll")]

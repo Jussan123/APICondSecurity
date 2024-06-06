@@ -1,7 +1,7 @@
-﻿using APICondSecurity.Interfaces;
-using APICondSecurity.Models;
-using APICondSecurity.Repositories;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using APICondSecurity.DTOs;
+using APICondSecurity.Infra.Data.Models;
+using APICondSecurity.Infra.Data.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
@@ -11,32 +11,50 @@ namespace APICondSecurity.Controllers
     public class UsuarioController : Controller
     {
         private readonly UsuarioRepository _usuarioRepository;
-        public UsuarioController(UsuarioRepository usuarioRepository)
+        private readonly IMapper _mapper;
+        public UsuarioController(UsuarioRepository usuarioRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _usuarioRepository = usuarioRepository;
         }
 
         [HttpPost("Cadastrar")]
-        public async Task<ActionResult> CadastrarUsuario(Usuario usuario)
+        public async Task<ActionResult> CadastrarUsuario(UsuarioDTO usuarioDTO)
         {
-            _usuarioRepository.Incluir(usuario);
             try
             {
+                var usuario = _mapper.Map<Usuario>(usuarioDTO);
+                await _usuarioRepository.Incluir(usuario);
                 await _usuarioRepository.SaveAllAsync();
-                return Ok("Usuario cadastrada com sucesso!");
+                return Ok("Usuario cadastrado com sucesso!");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-                return BadRequest($"Ocorreu um erro ao salvar a usuario: {ex.Message}");
+                return BadRequest($"Ocorreu um erro ao salvar o usuario: {ex.Message}");
             }
         }
 
         [HttpPut("Alterar")]
-        public async Task<ActionResult> UpdateUsuario(Usuario usuario)
+        public async Task<ActionResult> UpdateUsuario(UsuarioDTO usuarioDTO)
         {
-            _usuarioRepository.Alterar(usuario);
+            if (usuarioDTO.IdUsuario == null)
+            {
+                return BadRequest("Não foi possível alterar usuário. è necessário informar o Id.");
+            }
+            var usuarioExiste = await _usuarioRepository.Get(usuarioDTO.IdUsuario);
+            if (usuarioExiste == null)
+            {
+                return NotFound("Usuário não encontrado.");
+            }
+            usuarioExiste.Nome = usuarioDTO.Nome;
+            usuarioExiste.Telefone = usuarioDTO.Telefone;
+            usuarioExiste.Email = usuarioDTO.Email;
+            usuarioExiste.Senha = usuarioDTO.Senha;
+            usuarioExiste.Situacao = usuarioDTO.Situacao;
+
             try
             {
+                _usuarioRepository.Alterar(usuarioExiste);
                 await _usuarioRepository.SaveAllAsync();
                 return Ok("Usuario alterada com sucesso");
             }
@@ -50,20 +68,20 @@ namespace APICondSecurity.Controllers
         public async Task<ActionResult> Delete(int IdUsuario)
         {
             var usuario = _usuarioRepository.Get(IdUsuario);
-            if (usuario == null)
+            if (usuario != null)
             {
-                return NotFound("Id da usuario não encontrado.");
+                _usuarioRepository.ExcluirUser(await usuario);
+                try
+                {
+                    await _usuarioRepository.SaveAllAsync();
+                    return Ok("Usuario excluída com sucesso.");
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest($"Ocorreu um erro ao excluir a usuario: {ex.Message}");
+                }
             }
-            _usuarioRepository.Excluir(await usuario);
-            try
-            {
-                await _usuarioRepository.SaveAllAsync();
-                return Ok("Usuario excluída com sucesso.");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Ocorreu um erro ao excluir a usuario: {ex.Message}");
-            }
+            return NotFound("Id da usuario não encontrado.");
         }
 
         [HttpGet("Get")]
@@ -74,7 +92,8 @@ namespace APICondSecurity.Controllers
             {
                 return NotFound("Usuario Não encontrada para o Id informado.");
             }
-            return Ok(usuario);
+            var usuarioDTO = _mapper.Map<UsuarioDTO>(usuario);
+            return Ok(usuarioDTO);
         }
 
         [HttpGet("GetAll")]

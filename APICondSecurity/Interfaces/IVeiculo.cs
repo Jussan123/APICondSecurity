@@ -1,8 +1,4 @@
 ﻿using APICondSecurity.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace APICondSecurity.Interfaces
 {
@@ -12,6 +8,7 @@ namespace APICondSecurity.Interfaces
         void Alterar(Veiculo veiculo);
         void Excluir(Veiculo veiculo);
         Task<Veiculo> Get(int id);
+        Task<Veiculo> GetByPlaca(string placa);
         Task<IEnumerable<Veiculo>> GetAll();
         Task<bool> SaveAllAsync();
     }

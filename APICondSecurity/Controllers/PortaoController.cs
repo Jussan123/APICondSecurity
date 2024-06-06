@@ -1,7 +1,7 @@
-﻿using APICondSecurity.Interfaces;
-using APICondSecurity.Models;
-using APICondSecurity.Repositories;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using APICondSecurity.DTOs;
+using APICondSecurity.Infra.Data.Models;
+using APICondSecurity.Infra.Data.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
@@ -11,32 +11,47 @@ namespace APICondSecurity.Controllers
     public class PortaoController : Controller
     {
         private readonly PortaoRepository _portaoRepository;
-        public PortaoController(PortaoRepository portaoRepository)
+        private readonly IMapper _mapper;
+        public PortaoController(PortaoRepository portaoRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _portaoRepository = portaoRepository;
         }
 
         [HttpPost("Cadastrar")]
-        public async Task<ActionResult> CadastrarPortao(Portao portao)
+        public async Task<ActionResult> CadastrarPortao(PortaoDTO portaoDTO)
         {
+            var portao = _mapper.Map<Portao>(portaoDTO);
             _portaoRepository.Incluir(portao);
             try
             {
                 await _portaoRepository.SaveAllAsync();
                 return Ok("Portao cadastrada com sucesso!");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return BadRequest($"Ocorreu um erro ao salvar a portao: {ex.Message}");
             }
         }
 
         [HttpPut("Alterar")]
-        public async Task<ActionResult> UpdatePortao(Portao portao)
+        public async Task<ActionResult> UpdatePortao(PortaoDTO portaoDTO)
         {
-            _portaoRepository.Alterar(portao);
+            if (portaoDTO.IdPortao == null)
+            {
+                return BadRequest("Não é possivel alterar o portão. É necessário informar o Id.");
+            }
+            var portaoExiste = await _portaoRepository.Get(portaoDTO.IdPortao);
+            if (portaoExiste == null)
+            {
+                return NotFound("Portão não encontrado.");
+            }
+
+            portaoExiste.Nome = portaoDTO.Nome;
+
             try
             {
+                _portaoRepository.Alterar(portaoExiste);
                 await _portaoRepository.SaveAllAsync();
                 return Ok("Portao alterada com sucesso");
             }
@@ -74,7 +89,8 @@ namespace APICondSecurity.Controllers
             {
                 return NotFound("Portao Não encontrada para o Id informado.");
             }
-            return Ok(portao);
+            var portaoDTO = _mapper.Map<PortaoDTO>(portao);
+            return Ok(portaoDTO);
         }
 
         [HttpGet("GetAll")]

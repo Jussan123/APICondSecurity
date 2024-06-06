@@ -1,7 +1,7 @@
-﻿using APICondSecurity.Interfaces;
-using APICondSecurity.Models;
-using APICondSecurity.Repositories;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using APICondSecurity.DTOs;
+using APICondSecurity.Infra.Data.Models;
+using APICondSecurity.Infra.Data.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
@@ -11,32 +11,48 @@ namespace APICondSecurity.Controllers
     public class RfidController : Controller
     {
         private readonly RfidRepository _rfidRepository;
-        public RfidController(RfidRepository rfidRepository)
+        private readonly IMapper _mapper;
+        public RfidController(RfidRepository rfidRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _rfidRepository = rfidRepository;
         }
 
         [HttpPost("Cadastrar")]
-        public async Task<ActionResult> CadastrarRfid(Rfid rfid)
+        public async Task<ActionResult> CadastrarRfid(RfidDTO rfidDTO)
         {
+            var rfid = _mapper.Map<Rfid>(rfidDTO);
             _rfidRepository.Incluir(rfid);
             try
             {
                 await _rfidRepository.SaveAllAsync();
                 return Ok("Rfid cadastrada com sucesso!");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return BadRequest($"Ocorreu um erro ao salvar a rfid: {ex.Message}");
             }
         }
 
         [HttpPut("Alterar")]
-        public async Task<ActionResult> UpdateRfid(Rfid rfid)
+        public async Task<ActionResult> UpdateRfid(RfidDTO rfidDTO)
         {
-            _rfidRepository.Alterar(rfid);
+            if (rfidDTO.IdRfid == null)
+            {
+                return BadRequest("Não é possível alterar o Rfid. É necessário informar o Id.");
+            }
+            var rfidExiste = await _rfidRepository.Get(rfidDTO.IdRfid);
+            if (rfidExiste == null)
+            {
+                return NotFound("Rfid Não encontrado.");
+            }
+
+            rfidExiste.Numero = rfidDTO.Numero;
+            rfidExiste.Situacao = rfidDTO.Situacao;
+
             try
             {
+                _rfidRepository.Alterar(rfidExiste);
                 await _rfidRepository.SaveAllAsync();
                 return Ok("Rfid alterada com sucesso");
             }
@@ -74,7 +90,8 @@ namespace APICondSecurity.Controllers
             {
                 return NotFound("Rfid Não encontrada para o Id informado.");
             }
-            return Ok(rfid);
+            var rfidDTO = _mapper.Map<RfidDTO>(rfid);
+            return Ok(rfidDTO);
         }
 
         [HttpGet("GetAll")]

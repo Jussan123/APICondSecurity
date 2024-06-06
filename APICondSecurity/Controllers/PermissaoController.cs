@@ -1,7 +1,7 @@
-﻿using APICondSecurity.Interfaces;
-using APICondSecurity.Models;
-using APICondSecurity.Repositories;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using APICondSecurity.DTOs;
+using APICondSecurity.Infra.Data.Models;
+using APICondSecurity.Infra.Data.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
@@ -11,8 +11,10 @@ namespace APICondSecurity.Controllers
     public class PermissaoController : Controller
     {
         private readonly PermissaoRepository _permissaoRepository;
-        public PermissaoController(PermissaoRepository permissaoRepository)
+        private readonly IMapper _mapper;
+        public PermissaoController(PermissaoRepository permissaoRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _permissaoRepository = permissaoRepository;
         }
 
@@ -25,13 +27,13 @@ namespace APICondSecurity.Controllers
                 await _permissaoRepository.SaveAllAsync();
                 return Ok("Permissao cadastrada com sucesso!");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return BadRequest($"Ocorreu um erro ao salvar a permissao: {ex.Message}");
             }
         }
-
-        [HttpPut("Alterar")]
+        // Não vamos usar alteração na permissão
+        /*[HttpPut("Alterar")]
         public async Task<ActionResult> UpdatePermissao(Permissao permissao)
         {
             _permissaoRepository.Alterar(permissao);
@@ -44,7 +46,7 @@ namespace APICondSecurity.Controllers
             {
                 return BadRequest($"Erro ao alterar a permissao: {ex.Message}");
             }
-        }
+        }*/
 
         [HttpDelete("Excluir")]
         public async Task<ActionResult> Delete(int IdPermissao)
@@ -74,7 +76,8 @@ namespace APICondSecurity.Controllers
             {
                 return NotFound("Permissao Não encontrada para o Id informado.");
             }
-            return Ok(permissao);
+            var permissaoDTO = _mapper.Map<PermissaoDTO>(permissao);
+            return Ok(permissaoDTO);
         }
 
         [HttpGet("GetAll")]

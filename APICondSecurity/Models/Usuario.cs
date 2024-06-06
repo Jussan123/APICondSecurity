@@ -31,7 +31,17 @@ public partial class Usuario
     public string Senha { get; set; }
 
     [Column("telefone")]
-    public int Telefone { get; set; }
+    [StringLength(255)]
+    public string Telefone { get; set; }
+
+    [Required]
+    [Column("cpf")]
+    [StringLength(255)]
+    public string Cpf { get; set; }
+
+    [Column("situacao")]
+    [StringLength(2)]
+    public string Situacao { get; set; }
 
     [Column("id_residencia")]
     public int IdResidencia { get; set; }

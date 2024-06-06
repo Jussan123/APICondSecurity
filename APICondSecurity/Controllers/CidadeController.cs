@@ -1,40 +1,62 @@
-﻿using APICondSecurity.Interfaces;
-using APICondSecurity.Models;
-using APICondSecurity.Repositories;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using APICondSecurity.DTOs;
+using APICondSecurity.Infra.Data.Models;
+using APICondSecurity.Infra.Data.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CidadeController : Controller
+    public class CidadeController(CidadeRepository cidadeRepository, IMapper mapper) : Controller
     {
         private readonly CidadeRepository _cidadeRepository;
-        public CidadeController(CidadeRepository cidadeRepository)
-        {
-            _cidadeRepository = cidadeRepository;
-        }
+        private readonly IMapper _mapper = mapper;
 
         [HttpPost("Cadastrar")]
-        public async Task<ActionResult> CadastrarCidade(Cidade cidade)
+        public async Task<ActionResult> CadastrarCidade(CidadeDTO cidadeDTO)
         {
+            var cidadeIBGEExiste = await _cidadeRepository.Get(cidadeDTO.CidadeIbge);
+            if (cidadeIBGEExiste != null)
+            {
+                return NotFound("Codigo IBGE já cadastrado");
+            }
+            var cidade = _mapper.Map<Cidade>(cidadeDTO);
             _cidadeRepository.Incluir(cidade);
             try
             {
                 await _cidadeRepository.SaveAllAsync();
                 return Ok("Cidade cadastrada com sucesso!");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return BadRequest($"Ocorreu um erro ao salvar a cidade: {ex.Message}");
             }
         }
 
         [HttpPut("Alterar")]
-        public async Task<ActionResult> UpdateCidade(Cidade cidade)
+        public async Task<ActionResult> UpdateCidade(CidadeDTO cidadeDTO)
         {
-            _cidadeRepository.Alterar(cidade);
+            if (cidadeDTO.IdCidade == null)
+            {
+                return BadRequest("Não é possível alterar a cidade. É necessário informar o ID.");
+            }
+            var cidadeExiste = await _cidadeRepository.Get(cidadeDTO.IdCidade);
+
+            if (cidadeExiste == null)
+            {
+                return NotFound("Cidade não identificada.");
+            }
+
+            var cidadeIBGEExiste = await _cidadeRepository.GetByIBGE(cidadeDTO.CidadeIbge);
+            if (cidadeIBGEExiste != null && cidadeIBGEExiste.IdCidade != cidadeDTO.IdCidade)
+            {
+                return BadRequest("Codigo IBGE já cadastrado");
+            }
+
+            cidadeExiste.Nome = cidadeDTO.Nome;
+            cidadeExiste.CidadeIbge = cidadeDTO.CidadeIbge;
+
             try
             {
                 await _cidadeRepository.SaveAllAsync();
@@ -51,8 +73,9 @@ namespace APICondSecurity.Controllers
         {
             var cidade = _cidadeRepository.Get(IdCidade);
             if (cidade == null)
+
             {
-                return NotFound("Id da cidade não encontrado.");
+                return NotFound("Id da cidade não encontrada.");
             }
             _cidadeRepository.Excluir(await cidade);
             try
@@ -74,7 +97,8 @@ namespace APICondSecurity.Controllers
             {
                 return NotFound("Cidade Não encontrada para o Id informado.");
             }
-            return Ok(cidade);
+            var cidadeDTO = _mapper.Map<CidadeDTO>(cidade);
+            return Ok(cidadeDTO);
         }
 
         [HttpGet("GetAll")]

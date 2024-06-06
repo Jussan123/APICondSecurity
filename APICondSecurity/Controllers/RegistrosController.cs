@@ -1,42 +1,78 @@
-﻿using APICondSecurity.Interfaces;
-using APICondSecurity.Models;
-using APICondSecurity.Repositories;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using APICondSecurity.DTOs;
+using APICondSecurity.Infra.Data.Models;
+using APICondSecurity.Infra.Data.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class RegistrosController : Controller
+    public class RegistrosController(RegistrosRepository registrosRepository, IMapper mapper) : Controller, IRegistrosController
     {
-        private readonly RegistrosRepository _registrosRepository;
-        public RegistrosController(RegistrosRepository registrosRepository)
-        {
-            _registrosRepository = registrosRepository;
-        }
+        private readonly RegistrosRepository _registrosRepository = registrosRepository;
+        private readonly UsuarioRepository _usuarioRepository;
+        private readonly VeiculoRepository _veiculoRepository;
+        private readonly PortaoRepository _portaoRepository;
+        private readonly IMapper _mapper = mapper;
 
         [HttpPost("Cadastrar")]
-        public async Task<ActionResult> CadastrarRegistros(Registros registros)
+        public async Task<ActionResult> CadastrarRegistros(RegistrosDTO registrosDTO)
         {
+            var registros = _mapper.Map<Registros>(registrosDTO);
             _registrosRepository.Incluir(registros);
             try
             {
                 await _registrosRepository.SaveAllAsync();
                 return Ok("Registros cadastrada com sucesso!");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return BadRequest($"Ocorreu um erro ao salvar a registros: {ex.Message}");
             }
         }
 
         [HttpPut("Alterar")]
-        public async Task<ActionResult> UpdateRegistros(Registros registros)
+        public async Task<ActionResult> UpdateRegistros(RegistrosDTO registrosDTO)
         {
-            _registrosRepository.Alterar(registros);
+            if (registrosDTO.IdRegistros == null)
+            {
+                return BadRequest("Não é possível alterar o Registro. É necessário informar o Id.");
+            }
+            var registrosExiste = await _registrosRepository.Get(registrosDTO.IdRegistros);
+            if (registrosExiste == null)
+            {
+                return BadRequest("Registro não encontrado.");
+            }
+
+            var usuarioExiste = await _usuarioRepository.Get(registrosDTO.IdUsuario);
+            if (usuarioExiste == null)
+            {
+                return BadRequest("Usuário não encontrado.");
+            }
+
+            // Verificar se o IdPortao existe
+            var portaoExiste = await _portaoRepository.Get(registrosDTO.IdPortao);
+            if (portaoExiste == null)
+            {
+                return BadRequest("Portão não encontrado.");
+            }
+
+            var placaExiste = await _veiculoRepository.GetByPlaca(registrosDTO.Placa);
+            if (placaExiste == null)
+            {
+                return BadRequest("Placa não encontrada.");
+            }
+
+            registrosExiste.DataHoraEntrada = registrosDTO.DataHoraEntrada;
+            registrosExiste.DataHoraSaida = registrosDTO.DataHoraSaida;
+            registrosExiste.Placa = registrosDTO.Placa;
+            registrosExiste.IdPortao = registrosDTO.IdPortao;
+            registrosExiste.IdUsuario = registrosDTO.IdUsuario;
+
             try
             {
+                _registrosRepository.Alterar(registrosExiste);
                 await _registrosRepository.SaveAllAsync();
                 return Ok("Registros alterada com sucesso");
             }
@@ -74,7 +110,8 @@ namespace APICondSecurity.Controllers
             {
                 return NotFound("Registros Não encontrada para o Id informado.");
             }
-            return Ok(registros);
+            var registrosDTO = _mapper.Map<RegistrosDTO>(registros);
+            return Ok(registrosDTO);
         }
 
         [HttpGet("GetAll")]

@@ -1,8 +1,10 @@
-using APICondSecurity.Interfaces;
-using APICondSecurity.Models;
-using APICondSecurity.Repositories;
+using APICondSecurity;
+using APICondSecurity.Infra.Data.Context;
+using APICondSecurity.Infra.Data.Repositories;
+using APICondSecurity.Services;
+using APICondSecurity.Infra.Ioc;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,10 +18,17 @@ builder.Services.AddDbContext<condSecurityContext>(options =>
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     options.UseNpgsql(connectionString);
 });
+//builder.Services.AddInfrastructure(configuration);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
+builder.Services.AddInfrastructureSwagger();
+builder.Services.AddAutoMapper(typeof(EntitiesToDTOMappingProfile));
+// builder.Services.AddScoped<IAuthenticate, AuthenticateService>();
+builder.Services.AddScoped<IMapper, Mapper>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<CameraRepository>();
 builder.Services.AddScoped<CidadeRepository>();
 builder.Services.AddScoped<CondominioRepository>();
@@ -31,10 +40,13 @@ builder.Services.AddScoped<RegistrosRepository>();
 builder.Services.AddScoped<ResidenciaRepository>();
 builder.Services.AddScoped<RfidRepository>();
 builder.Services.AddScoped<TipoUsuarioRepository>();
+builder.Services.AddScoped<UfRepository>();
 builder.Services.AddScoped<UsuarioRepository>();
 builder.Services.AddScoped<VeiculoRepository>();
-builder.Services.AddScoped<VeiculoTerceiroRepository>();
 builder.Services.AddScoped<VeiculoUsuarioRepository>();
+builder.Services.AddScoped<VeiculoTerceiroRepository>();
+
+
 
 var app = builder.Build();
 

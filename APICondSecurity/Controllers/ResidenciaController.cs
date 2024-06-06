@@ -1,7 +1,7 @@
-﻿using APICondSecurity.Interfaces;
-using APICondSecurity.Models;
-using APICondSecurity.Repositories;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using APICondSecurity.DTOs;
+using APICondSecurity.Infra.Data.Models;
+using APICondSecurity.Infra.Data.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
@@ -11,32 +11,51 @@ namespace APICondSecurity.Controllers
     public class ResidenciaController : Controller
     {
         private readonly ResidenciaRepository _residenciaRepository;
-        public ResidenciaController(ResidenciaRepository residenciaRepository)
+        private readonly IMapper _mapper;
+        public ResidenciaController(ResidenciaRepository residenciaRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _residenciaRepository = residenciaRepository;
         }
 
         [HttpPost("Cadastrar")]
-        public async Task<ActionResult> CadastrarResidencia(Residencia residencia)
+        public async Task<ActionResult> CadastrarResidencia(ResidenciaDTO residenciaDTO)
         {
+            var residencia = _mapper.Map<Residencia>(residenciaDTO);
             _residenciaRepository.Incluir(residencia);
             try
             {
                 await _residenciaRepository.SaveAllAsync();
                 return Ok("Residencia cadastrada com sucesso!");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return BadRequest($"Ocorreu um erro ao salvar a residencia: {ex.Message}");
             }
         }
 
         [HttpPut("Alterar")]
-        public async Task<ActionResult> UpdateResidencia(Residencia residencia)
+        public async Task<ActionResult> UpdateResidencia(ResidenciaDTO residenciaDTO)
         {
-            _residenciaRepository.Alterar(residencia);
+            if (residenciaDTO.IdResidencia == null)
+            {
+                return BadRequest("Não é possivel alterar a residência. É necessário o Id.");
+            }
+            var residenciaExiste = await _residenciaRepository.Get(residenciaDTO.IdResidencia);
+
+            if (residenciaExiste == null)
+            {
+                return NotFound("Residência não encontrada.");
+            }
+
+            residenciaExiste.Numero = residenciaDTO.Numero;
+            residenciaExiste.Bloco = residenciaDTO.Bloco;
+            residenciaExiste.Quadra = residenciaDTO.Quadra;
+            residenciaExiste.Rua = residenciaDTO.Rua;
+
             try
             {
+                _residenciaRepository.Alterar(residenciaExiste);
                 await _residenciaRepository.SaveAllAsync();
                 return Ok("Residencia alterada com sucesso");
             }
@@ -74,7 +93,8 @@ namespace APICondSecurity.Controllers
             {
                 return NotFound("Residencia Não encontrada para o Id informado.");
             }
-            return Ok(residencia);
+            var residenciaDTO = _mapper.Map<ResidenciaDTO>(residencia);
+            return Ok(residenciaDTO);
         }
 
         [HttpGet("GetAll")]

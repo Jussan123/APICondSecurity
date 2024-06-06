@@ -1,25 +1,84 @@
-﻿using APICondSecurity.Interfaces;
-using APICondSecurity.Models;
-using APICondSecurity.Repositories;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using APICondSecurity.DTOs;
+using APICondSecurity.Infra.Data.Models;
+using APICondSecurity.Infra.Data.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CamerasController : Controller
+    public class CamerasController(CameraRepository cameraRepository, IMapper mapper) : Controller
     {
-        private readonly CameraRepository _cameraRepository;
-        public CamerasController(CameraRepository cameraRepository)
+        private readonly CameraRepository _cameraRepository = cameraRepository;
+        private readonly IMapper _mapper = mapper;
+
+        [HttpPost("Cadastrar")]
+        public async Task<ActionResult> CadastrarCamera(CamerasDTO cameraDTO)
         {
-            _cameraRepository = cameraRepository;
+            var camera = _mapper.Map<Cameras>(cameraDTO);
+            _cameraRepository.Incluir(camera);
+            try
+            {
+                await _cameraRepository.SaveAllAsync();
+                return Ok("Câmera cadastrada com sucesso!");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Ocorreu um erro ao salvar a câmera: {ex.Message}");
+            }
         }
 
-        [HttpGet("GetAll")]
-        public async Task<ActionResult<IEnumerable<CameraRepository>>> GetCameras()
+        [HttpPut("Alterar")]
+        public async Task<ActionResult> UpdateCamera(CamerasDTO cameraDTO)
         {
-            return Ok(await _cameraRepository.GetAll());
+            if (cameraDTO.IdCamera == null)
+            {
+                return BadRequest("Não é possível alterar a camera é necessário informar o ID.");
+            }
+
+            var cameraExiste = await _cameraRepository.Get(cameraDTO.IdCamera);
+
+            if (cameraExiste == null)
+            {
+                return NotFound("Camera não identificada.");
+            }
+
+            cameraExiste.IpCamera = cameraDTO.IpCamera;
+            cameraExiste.Posicao = cameraDTO.Posicao;
+            cameraExiste.Tipo = cameraDTO.Tipo;
+
+            try
+            {
+                _cameraRepository.Alterar(cameraExiste);
+                await _cameraRepository.SaveAllAsync();
+                return Ok("Camera alterada com sucesso");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Erro ao alterar a camera: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("Excluir")]
+        public async Task<ActionResult> Delete(int IdCamera)
+        {
+            var camera = _cameraRepository.Get(IdCamera);
+            if (camera == null)
+
+            {
+                return NotFound("Id da camera não encontrado.");
+            }
+            _cameraRepository.Excluir(await camera);
+            try
+            {
+                await _cameraRepository.SaveAllAsync();
+                return Ok("Camera excluída com sucesso.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Ocorreu um erro ao excluir a camera: {ex.Message}");
+            }
         }
 
         [HttpGet("Get")]
@@ -30,22 +89,16 @@ namespace APICondSecurity.Controllers
             {
                 return NotFound("Camera Não encontrada para o Id informado.");
             }
-            return Ok(camera);
+            var cameraDTO = _mapper.Map<CamerasDTO>(camera);
+            return Ok(cameraDTO);
         }
 
-        [HttpPost("Cadastrar")]
-        public async Task<ActionResult> CadastrarCamera(Cameras camera)
+        [HttpGet("GetAll")]
+        public async Task<ActionResult<IEnumerable<CameraRepository>>> GetCameras()
         {
-            _cameraRepository.Incluir(camera);
-            if (!await _cameraRepository.SaveAllAsync())
-            {
-                return BadRequest("Ocorreu um erro ao salvar a câmera");
-            }
-
-            return Ok("Câmera cadastrada com sucesso!");
+            var camera = await _cameraRepository.GetAll();
+            var cameraDTO = _mapper.Map<IEnumerable<CamerasDTO>>(camera);
+            return Ok(cameraDTO);
         }
-
-        
-
     }
 }
