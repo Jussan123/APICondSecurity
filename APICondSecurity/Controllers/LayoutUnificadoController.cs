@@ -3,6 +3,7 @@ using APICondSecurity.Infra.Data.Models;
 using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 
 namespace APICondSecurity.Controllers
 {
@@ -40,14 +41,23 @@ namespace APICondSecurity.Controllers
         [HttpPost("CadastroUnificadoDeUsuario")]
         public async Task<ActionResult> CadastroUnificadoDeUsuario(LayoutUnificadoCadastroUsuarioDTO layoutUnificadoCadastroUsuarioDTO)
         {
+            var emailExiste = await _userRepository.UserExists(layoutUnificadoCadastroUsuarioDTO.Email);
+            if (emailExiste)
+            {
+                return BadRequest("Este E-mail já possui um cadastro em nosso sistema.");
+            }
+                        
             var userDTO = (layoutUnificadoCadastroUsuarioDTO.Name,
                            layoutUnificadoCadastroUsuarioDTO.Email,
                            layoutUnificadoCadastroUsuarioDTO.Senha,
                            layoutUnificadoCadastroUsuarioDTO.Telefone,
                            layoutUnificadoCadastroUsuarioDTO.Situacao,
                            layoutUnificadoCadastroUsuarioDTO.Cpf);
-            var usuario = _mapper.Map<User>(userDTO);
-
+            var user = _mapper.Map<User>(userDTO);
+            user.SenhaSalt = [10];
+            user.SenhaHash = Encoding.ASCII.GetBytes(layoutUnificadoCadastroUsuarioDTO.Senha);
+            user.CpfSalt = [10];
+            user.CpfHash = Encoding.ASCII.GetBytes(layoutUnificadoCadastroUsuarioDTO.Cpf);
             var tipoUsuarioDTO = (layoutUnificadoCadastroUsuarioDTO.Tipo);
             var tipoUsuario = _mapper.Map<TipoUsuario>(tipoUsuarioDTO);
 
@@ -56,7 +66,8 @@ namespace APICondSecurity.Controllers
                                  layoutUnificadoCadastroUsuarioDTO.Quadra,
                                  layoutUnificadoCadastroUsuarioDTO.Rua);
             var residencia = _mapper.Map<Residencia>(residenciaDTO);
-            _userRepository.Incluir(usuario);
+
+            _userRepository.Incluir(user);
             _tipoUsuarioRepository.Incluir(tipoUsuario);
             _residenciaRepository.Incluir(residencia);
 
