@@ -135,7 +135,10 @@ namespace APICondSecurity.Infra.Data.Repositories
         {
             try
             {
+
                 var user = await _repository.Login(email, senha);
+                user.SenhaSalt = [10];
+                user.SenhaHash = Encoding.ASCII.GetBytes(senha);
                 return user;
             }
             catch (Exception ex)

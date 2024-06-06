@@ -70,6 +70,7 @@ namespace APICondSecurity.Controllers
                 return BadRequest("Usuário não encontrado.");
             }
 
+
             var token = _userService.GenerateToken(user.Id_user, user.Email);
             return new UserToken
             {
