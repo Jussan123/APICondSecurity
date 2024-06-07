@@ -135,8 +135,10 @@ namespace APICondSecurity.Infra.Data.Repositories
         {
             try
             {
+                var userGet = await _context.User.Where(x => x.Email.ToUpper().Equals(email.ToUpper())).FirstOrDefaultAsync();
                 var user = await _repository.Login(email, senha);
-                return user;
+                // fazer um get user por email e senha
+                return userGet;
             }
             catch (Exception ex)
             {
@@ -195,6 +197,11 @@ namespace APICondSecurity.Infra.Data.Repositories
                 return false;
             }
             return true;
+        }
+
+        public async Task<User> GetUserByEmail(string email)
+        {
+            return await  _context.User.Where(x => x.Email.ToUpper() == email.ToUpper()).FirstOrDefaultAsync();
         }
 
     }

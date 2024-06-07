@@ -12,5 +12,6 @@ namespace APICondSecurity.Infra.Data.Interfaces
         Task<User> Login(string Email, string Senha);
         Task<IEnumerable<User>> GetAll();
         Task<bool> SaveAllAsync();
+
     }
 }

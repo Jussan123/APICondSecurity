@@ -2,6 +2,7 @@
 using APICondSecurity.Infra.Data.Models;
 using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
@@ -17,6 +18,7 @@ namespace APICondSecurity.Controllers
         private readonly IMapper _mapper = mapper;
 
         [HttpPost("Cadastrar")]
+        [Authorize]
         public async Task<ActionResult> CadastrarRegistros(RegistrosDTO registrosDTO)
         {
             var registros = _mapper.Map<Registros>(registrosDTO);
@@ -33,6 +35,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPut("Alterar")]
+        [Authorize]
         public async Task<ActionResult> UpdateRegistros(RegistrosDTO registrosDTO)
         {
             if (registrosDTO.IdRegistros == null)
@@ -83,6 +86,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpDelete("Excluir")]
+        [Authorize]
         public async Task<ActionResult> Delete(int IdRegistros)
         {
             var registros = _registrosRepository.Get(IdRegistros);
@@ -103,6 +107,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("Get")]
+        [Authorize]
         public async Task<ActionResult<RegistrosRepository>> Get(int IdRegistros)
         {
             var registros = await _registrosRepository.Get(IdRegistros);
@@ -115,6 +120,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("GetAll")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<RegistrosRepository>>> GetRegistros()
         {
             return Ok(await _registrosRepository.GetAll());

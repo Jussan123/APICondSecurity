@@ -2,12 +2,14 @@
 using APICondSecurity.Infra.Data.Models;
 using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class CamerasController(CameraRepository cameraRepository, IMapper mapper) : Controller
     {
         private readonly CameraRepository _cameraRepository = cameraRepository;
@@ -30,6 +32,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPut("Alterar")]
+        [Authorize]
         public async Task<ActionResult> UpdateCamera(CamerasDTO cameraDTO)
         {
             if (cameraDTO.IdCamera == null)
@@ -61,6 +64,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpDelete("Excluir")]
+        [Authorize]
         public async Task<ActionResult> Delete(int IdCamera)
         {
             var camera = _cameraRepository.Get(IdCamera);
@@ -82,6 +86,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("Get")]
+        [Authorize]
         public async Task<ActionResult<CameraRepository>> Get(int IdCamera)
         {
             var camera = await _cameraRepository.Get(IdCamera);
@@ -94,6 +99,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("GetAll")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<CameraRepository>>> GetCameras()
         {
             var camera = await _cameraRepository.GetAll();

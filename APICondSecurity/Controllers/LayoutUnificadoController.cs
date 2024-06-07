@@ -2,7 +2,9 @@
 using APICondSecurity.Infra.Data.Models;
 using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace APICondSecurity.Controllers
@@ -39,6 +41,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("CadastroUnificadoDeUsuario")]
+        [Authorize]
         public async Task<ActionResult> CadastroUnificadoDeUsuario(LayoutUnificadoCadastroUsuarioDTO layoutUnificadoCadastroUsuarioDTO)
         {
             var emailExiste = await _userRepository.UserExists(layoutUnificadoCadastroUsuarioDTO.Email);
@@ -46,33 +49,51 @@ namespace APICondSecurity.Controllers
             {
                 return BadRequest("Este E-mail já possui um cadastro em nosso sistema.");
             }
-                        
-            var userDTO = (layoutUnificadoCadastroUsuarioDTO.Name,
-                           layoutUnificadoCadastroUsuarioDTO.Email,
-                           layoutUnificadoCadastroUsuarioDTO.Senha,
-                           layoutUnificadoCadastroUsuarioDTO.Telefone,
-                           layoutUnificadoCadastroUsuarioDTO.Situacao,
-                           layoutUnificadoCadastroUsuarioDTO.Cpf);
-            var user = _mapper.Map<User>(userDTO);
-            user.SenhaSalt = [10];
-            user.SenhaHash = Encoding.ASCII.GetBytes(layoutUnificadoCadastroUsuarioDTO.Senha);
-            user.CpfSalt = [10];
-            user.CpfHash = Encoding.ASCII.GetBytes(layoutUnificadoCadastroUsuarioDTO.Cpf);
-            var tipoUsuarioDTO = (layoutUnificadoCadastroUsuarioDTO.Tipo);
-            var tipoUsuario = _mapper.Map<TipoUsuario>(tipoUsuarioDTO);
-
-            var residenciaDTO = (layoutUnificadoCadastroUsuarioDTO.Numero,
-                                 layoutUnificadoCadastroUsuarioDTO.Bloco,
-                                 layoutUnificadoCadastroUsuarioDTO.Quadra,
-                                 layoutUnificadoCadastroUsuarioDTO.Rua);
-            var residencia = _mapper.Map<Residencia>(residenciaDTO);
-
-            _userRepository.Incluir(user);
-            _tipoUsuarioRepository.Incluir(tipoUsuario);
-            _residenciaRepository.Incluir(residencia);
 
             try
-            {
+            { 
+                UserDTO userDTO = new UserDTO()
+                {
+                    Name =  layoutUnificadoCadastroUsuarioDTO.Name,
+                    Email =  layoutUnificadoCadastroUsuarioDTO.Email,
+                    Senha =  layoutUnificadoCadastroUsuarioDTO.Senha,
+                    Telefone =  layoutUnificadoCadastroUsuarioDTO.Telefone,
+                    Situacao =  layoutUnificadoCadastroUsuarioDTO.Situacao,
+                    Cpf =  layoutUnificadoCadastroUsuarioDTO.Cpf
+                };
+
+                var user = _mapper.Map<User>(userDTO);
+                
+                using var hmac = new HMACSHA512();
+                byte[] SenhaHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userDTO.Senha));
+                byte[] SenhaSalt = hmac.Key;
+                byte[] CpfHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userDTO.Cpf));
+                byte[] CpfSalt = hmac.Key;
+
+                user.AlterarSenha(SenhaHash, SenhaSalt);
+                user.CpfHash = CpfHash;
+                user.CpfSalt = CpfSalt;
+
+                TipoUsuarioDTO tipoUsuarioDTO = new TipoUsuarioDTO()
+                {
+                    Tipo = layoutUnificadoCadastroUsuarioDTO.Tipo
+                };
+                var tipoUsuario = _mapper.Map<TipoUsuario>(tipoUsuarioDTO);
+
+                ResidenciaDTO residenciaDTO = new ResidenciaDTO()
+                {
+                    Numero = layoutUnificadoCadastroUsuarioDTO.Numero,
+                    Bloco = layoutUnificadoCadastroUsuarioDTO.Bloco,
+                    Quadra = layoutUnificadoCadastroUsuarioDTO.Quadra,
+                    Rua = layoutUnificadoCadastroUsuarioDTO.Rua
+                };
+
+                var residencia = _mapper.Map<Residencia>(residenciaDTO);
+
+                _userRepository.Incluir(user);
+                _tipoUsuarioRepository.Incluir(tipoUsuario);
+                _residenciaRepository.Incluir(residencia);
+         
                 await _userRepository.SaveAllAsync();
                 await _tipoUsuarioRepository.SaveAllAsync();
                 await _residenciaRepository.SaveAllAsync();
@@ -85,31 +106,41 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("CadastroUnificadoVeiculo")]
+        [Authorize]
         public async Task<ActionResult> CadastroUnificadoVeiculo(LayoutUnificadoCadastroVeiculoDTO layoutUnificadoCadastroVeiculoDTO)
         {
-            var veiculoDTO = (layoutUnificadoCadastroVeiculoDTO.Placa,
-                              layoutUnificadoCadastroVeiculoDTO.Marca,
-                              layoutUnificadoCadastroVeiculoDTO.Modelo,
-                              layoutUnificadoCadastroVeiculoDTO.Cor,
-                              layoutUnificadoCadastroVeiculoDTO.Ano,
-                              layoutUnificadoCadastroVeiculoDTO.Situacao);
-            var veiculo = _mapper.Map<Veiculo>(veiculoDTO);
-
-            var veiculoTerceiroDTO = (layoutUnificadoCadastroVeiculoDTO.Placa,
-                                      layoutUnificadoCadastroVeiculoDTO.IdUsuario);
-            var veiculoTerceiro = _mapper.Map<VeiculoTerceiro>(veiculoTerceiroDTO);
-
-            var veiculoUsuarioDTO = (layoutUnificadoCadastroVeiculoDTO.Placa,
-                                      layoutUnificadoCadastroVeiculoDTO.IdUsuario,
-                                      layoutUnificadoCadastroVeiculoDTO.IdRfid);
-            var veiculoUsuario = _mapper.Map<VeiculoUsuario>(veiculoUsuarioDTO);
-
-            _veiculoRepository.Incluir(veiculo);
-            _veiculoTerceiroRepository.Incluir(veiculoTerceiro);
-            _veiculoUsuarioRepository.Incluir(veiculoUsuario);
-
             try
             {
+                VeiculoDTO veiculoDTO = new VeiculoDTO()
+                {
+                    Placa = layoutUnificadoCadastroVeiculoDTO.Placa,
+                    Marca = layoutUnificadoCadastroVeiculoDTO.Marca,
+                    Modelo = layoutUnificadoCadastroVeiculoDTO.Modelo,
+                    Cor = layoutUnificadoCadastroVeiculoDTO.Cor,
+                    Ano = layoutUnificadoCadastroVeiculoDTO.Ano,
+                    Situacao = layoutUnificadoCadastroVeiculoDTO.Situacao
+                };
+                var veiculo = _mapper.Map<Veiculo>(veiculoDTO);
+
+                VeiculoTerceiroDTO veiculoTerceiroDTO = new VeiculoTerceiroDTO()
+                {
+                    Placa = layoutUnificadoCadastroVeiculoDTO.Placa,
+                    IdUsuario = layoutUnificadoCadastroVeiculoDTO.IdUsuario
+                };
+                var veiculoTerceiro = _mapper.Map<VeiculoTerceiro>(veiculoTerceiroDTO);
+
+                VeiculoUsuarioDTO veiculoUsuarioDTO = new VeiculoUsuarioDTO()
+                {
+                    Placa = layoutUnificadoCadastroVeiculoDTO.Placa,
+                    IdUsuario = layoutUnificadoCadastroVeiculoDTO.IdUsuario,
+                    IdRfid = layoutUnificadoCadastroVeiculoDTO.IdRfid
+                };
+                var veiculoUsuario = _mapper.Map<VeiculoUsuario>(veiculoUsuarioDTO);
+
+                _veiculoRepository.Incluir(veiculo);
+                _veiculoTerceiroRepository.Incluir(veiculoTerceiro);
+                _veiculoUsuarioRepository.Incluir(veiculoUsuario);
+
                 await _veiculoRepository.SaveAllAsync();
                 await _veiculoTerceiroRepository.SaveAllAsync();
                 await _veiculoUsuarioRepository.SaveAllAsync();
@@ -122,33 +153,47 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("CadastroUnificadoCondomino")]
+        [Authorize]
         public async Task<ActionResult> CadastroUnificadoCondominio(LayoutUnificadoCadastroCondominoDTO layoutUnificadoCadastroCondominoDTO)
         {
-            var condominioDTO = (layoutUnificadoCadastroCondominoDTO.Nome,
-                                 layoutUnificadoCadastroCondominoDTO.Situacao);
-            var condominio = _mapper.Map<Condominio>(condominioDTO);
-
-            var enderecoDTO = (layoutUnificadoCadastroCondominoDTO.Rua,
-                               layoutUnificadoCadastroCondominoDTO.Numero,
-                               layoutUnificadoCadastroCondominoDTO.Bairro,
-                               layoutUnificadoCadastroCondominoDTO.Cep,
-                               layoutUnificadoCadastroCondominoDTO.Complemento);
-            var endereco = _mapper.Map<Endereco>(enderecoDTO);
-
-            var cidadeDTO = (layoutUnificadoCadastroCondominoDTO.NomeCidade,
-                             layoutUnificadoCadastroCondominoDTO.CidadeIbge);
-            var cidade = _mapper.Map<Cidade>(cidadeDTO);
-
-            var ufDTO = (layoutUnificadoCadastroCondominoDTO.NomeUf,
-                         layoutUnificadoCadastroCondominoDTO.Sigla);
-            var uf = _mapper.Map<Uf>(ufDTO);
-            _condominioRepository.Incluir(condominio);
-            _enderecoRepository.Incluir(endereco);
-            _cidadeRepository.Incluir(cidade);
-            _ufRepository.Incluir(uf);
-
             try
-            {
+            { 
+                CondominioDTO condominioDTO = new CondominioDTO()
+                {
+                    Nome = layoutUnificadoCadastroCondominoDTO.Nome,
+                    Situacao = layoutUnificadoCadastroCondominoDTO.Situacao
+                };
+                var condominio = _mapper.Map<Condominio>(condominioDTO);
+
+                EnderecoDTO enderecoDTO = new EnderecoDTO()
+                {
+                    Rua = layoutUnificadoCadastroCondominoDTO.Rua,
+                    Numero = layoutUnificadoCadastroCondominoDTO.Numero,
+                    Bairro = layoutUnificadoCadastroCondominoDTO.Bairro,
+                    Cep = layoutUnificadoCadastroCondominoDTO.Cep,
+                    Complemento = layoutUnificadoCadastroCondominoDTO.Complemento
+                };
+                var endereco = _mapper.Map<Endereco>(enderecoDTO);
+
+                CidadeDTO cidadeDTO = new CidadeDTO()
+                {
+                    Nome = layoutUnificadoCadastroCondominoDTO.NomeCidade,
+                    CidadeIbge = layoutUnificadoCadastroCondominoDTO.CidadeIbge
+                };
+                var cidade = _mapper.Map<Cidade>(cidadeDTO);
+
+                UfDTO ufDTO = new UfDTO()
+                {
+                    Nome = layoutUnificadoCadastroCondominoDTO.NomeUf,
+                    Sigla = layoutUnificadoCadastroCondominoDTO.Sigla
+                };
+                var uf = _mapper.Map<Uf>(ufDTO);
+
+                _condominioRepository.Incluir(condominio);
+                _enderecoRepository.Incluir(endereco);
+                _cidadeRepository.Incluir(cidade);
+                _ufRepository.Incluir(uf);
+
                 await _condominioRepository.SaveAllAsync();
                 await _enderecoRepository.SaveAllAsync();
                 await _cidadeRepository.SaveAllAsync();

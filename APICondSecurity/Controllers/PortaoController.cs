@@ -2,6 +2,7 @@
 using APICondSecurity.Infra.Data.Models;
 using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
@@ -19,6 +20,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("Cadastrar")]
+        [Authorize]
         public async Task<ActionResult> CadastrarPortao(PortaoDTO portaoDTO)
         {
             var portao = _mapper.Map<Portao>(portaoDTO);
@@ -35,6 +37,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPut("Alterar")]
+        [Authorize]
         public async Task<ActionResult> UpdatePortao(PortaoDTO portaoDTO)
         {
             if (portaoDTO.IdPortao == null)
@@ -62,6 +65,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpDelete("Excluir")]
+        [Authorize]
         public async Task<ActionResult> Delete(int IdPortao)
         {
             var portao = _portaoRepository.Get(IdPortao);
@@ -82,6 +86,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("Get")]
+        [Authorize]
         public async Task<ActionResult<PortaoRepository>> Get(int IdPortao)
         {
             var portao = await _portaoRepository.Get(IdPortao);
@@ -94,6 +99,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("GetAll")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<PortaoRepository>>> GetPortao()
         {
             return Ok(await _portaoRepository.GetAll());

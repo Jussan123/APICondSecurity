@@ -2,6 +2,7 @@
 using APICondSecurity.Infra.Data.Models;
 using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
@@ -19,6 +20,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("Cadastrar")]
+        [Authorize]
         public async Task<ActionResult> CadastrarUf(UfDTO ufDTO)
         {
             var uf = _mapper.Map<Uf>(ufDTO);
@@ -35,6 +37,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPut("Alterar")]
+        [Authorize]
         public async Task<ActionResult> UpdateUf(UfDTO ufDTO)
         {
             if (ufDTO.IdUf == null)
@@ -62,6 +65,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpDelete("Excluir")]
+        [Authorize]
         public async Task<ActionResult> Delete(int IdUf)
         {
             var uf = _ufRepository.Get(IdUf);
@@ -82,6 +86,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("Get")]
+        [Authorize]
         public async Task<ActionResult<UfRepository>> Get(int IdUf)
         {
             var uf = await _ufRepository.Get(IdUf);
@@ -94,6 +99,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("GetAll")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<UfRepository>>> GetUf()
         {
             return Ok(await _ufRepository.GetAll());

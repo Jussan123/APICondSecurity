@@ -14,12 +14,13 @@
 
         public User() { }
    
-        public User(int id_user, string name, string email, byte[] cpfHash)
+        public User(int id_user, string name, string email, byte[] cpfHash, byte[] cpfSalt)
         {
             this.Id_user = id_user;
             this.Name = name;
             this.Email = email;
             this.CpfHash = cpfHash;
+            this.CpfSalt = cpfSalt;
         }
 
         public User(string name, string email)

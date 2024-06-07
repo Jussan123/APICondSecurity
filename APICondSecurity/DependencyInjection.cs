@@ -46,7 +46,7 @@ namespace APICondSecurity
             });
             Services.AddAutoMapper(typeof(EntitiesToDTOMappingProfile));
             //repositories
-            Services.AddScoped<IUser, UserRepository>();
+            //Services.AddScoped<IUser, UserRepository>();
 
             //services
             Services.AddScoped<IUserService, UserService>();

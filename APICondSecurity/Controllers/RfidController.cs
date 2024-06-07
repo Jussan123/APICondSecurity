@@ -2,6 +2,7 @@
 using APICondSecurity.Infra.Data.Models;
 using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
@@ -19,6 +20,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("Cadastrar")]
+        [Authorize]
         public async Task<ActionResult> CadastrarRfid(RfidDTO rfidDTO)
         {
             var rfid = _mapper.Map<Rfid>(rfidDTO);
@@ -35,6 +37,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPut("Alterar")]
+        [Authorize]
         public async Task<ActionResult> UpdateRfid(RfidDTO rfidDTO)
         {
             if (rfidDTO.IdRfid == null)
@@ -63,6 +66,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpDelete("Excluir")]
+        [Authorize]
         public async Task<ActionResult> Delete(int IdRfid)
         {
             var rfid = _rfidRepository.Get(IdRfid);
@@ -83,6 +87,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("Get")]
+        [Authorize]
         public async Task<ActionResult<RfidRepository>> Get(int IdRfid)
         {
             var rfid = await _rfidRepository.Get(IdRfid);
@@ -95,6 +100,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("GetAll")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<RfidRepository>>> GetRfid()
         {
             return Ok(await _rfidRepository.GetAll());

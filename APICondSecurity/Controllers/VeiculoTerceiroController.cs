@@ -2,6 +2,7 @@
 using APICondSecurity.Infra.Data.Models;
 using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
@@ -20,6 +21,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("Cadastrar")]
+        [Authorize]
         public async Task<ActionResult> CadastrarVeiculoTerceiro(VeiculoTerceiroDTO veiculoTerceiroDTO)
         {
             var veiculoTerceiro = _mapper.Map<VeiculoTerceiro>(veiculoTerceiroDTO);
@@ -36,6 +38,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPut("Alterar")]
+        [Authorize]
         public async Task<ActionResult> UpdateVeiculoTerceiro(VeiculoTerceiroDTO veiculoTerceiroDTO)
         {
             if (veiculoTerceiroDTO.IdVeiculoTerceiro == null)
@@ -62,6 +65,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpDelete("Excluir")]
+        [Authorize]
         public async Task<ActionResult> Delete(int IdVeiculoTerceiro)
         {
             var veiculoTerceiro = _veiculoTerceiroRepository.Get(IdVeiculoTerceiro);
@@ -82,6 +86,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("Get")]
+        [Authorize]
         public async Task<ActionResult<VeiculoTerceiroRepository>> Get(int IdVeiculoTerceiro)
         {
             var veiculoTerceiro = await _veiculoTerceiroRepository.Get(IdVeiculoTerceiro);
@@ -94,6 +99,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("GetAll")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<VeiculoTerceiroRepository>>> GetVeiculoTerceiro()
         {
             return Ok(await _veiculoTerceiroRepository.GetAll());

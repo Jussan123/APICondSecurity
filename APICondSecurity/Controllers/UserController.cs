@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
 using System.Text;
+using System.Security.Cryptography;
 
 namespace APICondSecurity.Controllers
 {
@@ -23,6 +24,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("register")]
+        //[Authorize]
         public async Task<ActionResult<UserToken>> Incluir(UserDTO userDTO)
         {
             if (userDTO == null)
@@ -37,11 +39,23 @@ namespace APICondSecurity.Controllers
             }
 
             var user = _mapper.Map<User>(userDTO);
-
+            if(userDTO.Senha != null && userDTO.Cpf != null)
+            {
+                using var hmac = new HMACSHA512();
+                byte[] SenhaHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userDTO.Senha));
+                byte[] SenhaSalt = hmac.Key;
+                byte[] CpfHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userDTO.Cpf));
+                byte[] CpfSalt = hmac.Key;
+                
+                user.AlterarSenha(SenhaHash, SenhaSalt);
+                user.CpfHash = CpfHash;
+                user.CpfSalt = CpfSalt;
+            }
+            /*
             user.SenhaSalt = [10];
             user.SenhaHash = Encoding.ASCII.GetBytes(userDTO.Senha);
             user.CpfSalt = [10];
-            user.CpfHash = Encoding.ASCII.GetBytes(userDTO.Cpf);
+            user.CpfHash = Encoding.ASCII.GetBytes(userDTO.Cpf);*/
 
             var userN = await _userService.Incluir(user);
             if (userN == null)
@@ -57,18 +71,26 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("loginApp")]
-        public async Task<ActionResult<UserToken>> LoginApp(UserLoginDTO loginDTO)
+        public async Task<ActionResult<UserToken>> LoginApp(LoginModel loginModel)
         {
-            if (loginDTO == null || string.IsNullOrEmpty(loginDTO.Email) || string.IsNullOrEmpty(loginDTO.Senha))
+            if (loginModel == null || string.IsNullOrEmpty(loginModel.Email) || string.IsNullOrEmpty(loginModel.Senha))
             {
                 return BadRequest("Email e Senha são obrigatórios.");
             }
 
-            var user = await _userService.Login(loginDTO.Email, loginDTO.Senha);
-            if (user == null)
+            var emailExiste = await _userService.UserExists(loginModel.Email);
+            if (!emailExiste)
             {
                 return BadRequest("Usuário não encontrado.");
             }
+
+            var senhaCorreta = await _userService.AuthenticateAsync(loginModel.Email, loginModel.Senha);
+            if (!senhaCorreta)
+            {
+                return BadRequest("Senha incorreta.");
+            }
+
+            var user = await _userService.GetUserByEmail(loginModel.Email);
 
             var token = _userService.GenerateToken(user.Id_user, user.Email);
             return new UserToken
@@ -76,22 +98,6 @@ namespace APICondSecurity.Controllers
                 Token = token
             };
         }
-        /*
-        [HttpGet("loginAplicacoes")]
-        public async Task<bool> LoginAplicacoes(string email, string senha, string token)
-        {
-            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(senha) || string.IsNullOrEmpty(token))
-            {
-                return false;
-            }
-
-            var user = await _userService.LoginAplicacoes(email, senha, token);
-            if (user == null)
-            {
-                return false;
-            }
-
-            return true;
-        } */
+        
     }
 }

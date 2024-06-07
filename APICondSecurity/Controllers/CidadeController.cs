@@ -2,6 +2,7 @@
 using APICondSecurity.Infra.Data.Models;
 using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
@@ -14,6 +15,7 @@ namespace APICondSecurity.Controllers
         private readonly IMapper _mapper = mapper;
 
         [HttpPost("Cadastrar")]
+        [Authorize]
         public async Task<ActionResult> CadastrarCidade(CidadeDTO cidadeDTO)
         {
             var cidadeIBGEExiste = await _cidadeRepository.Get(cidadeDTO.CidadeIbge);
@@ -35,6 +37,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPut("Alterar")]
+        [Authorize]
         public async Task<ActionResult> UpdateCidade(CidadeDTO cidadeDTO)
         {
             if (cidadeDTO.IdCidade == null)
@@ -69,6 +72,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpDelete("Excluir")]
+        [Authorize]
         public async Task<ActionResult> Delete(int IdCidade)
         {
             var cidade = _cidadeRepository.Get(IdCidade);
@@ -90,6 +94,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("Get")]
+        [Authorize]
         public async Task<ActionResult<CidadeRepository>> Get(int IdCidade)
         {
             var cidade = await _cidadeRepository.Get(IdCidade);
@@ -102,6 +107,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("GetAll")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<CidadeRepository>>> GetCidade()
         {
             return Ok(await _cidadeRepository.GetAll());

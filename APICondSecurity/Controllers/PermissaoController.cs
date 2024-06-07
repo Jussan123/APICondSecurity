@@ -2,6 +2,7 @@
 using APICondSecurity.Infra.Data.Models;
 using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
@@ -19,6 +20,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("Cadastrar")]
+        [Authorize]
         public async Task<ActionResult> CadastrarPermissao(Permissao permissao)
         {
             _permissaoRepository.Incluir(permissao);
@@ -49,6 +51,7 @@ namespace APICondSecurity.Controllers
         }*/
 
         [HttpDelete("Excluir")]
+        [Authorize]
         public async Task<ActionResult> Delete(int IdPermissao)
         {
             var permissao = _permissaoRepository.Get(IdPermissao);
@@ -69,6 +72,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("Get")]
+        [Authorize]
         public async Task<ActionResult<PermissaoRepository>> Get(int IdPermissao)
         {
             var permissao = await _permissaoRepository.Get(IdPermissao);
@@ -81,6 +85,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("GetAll")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<PermissaoRepository>>> GetPermissao()
         {
             return Ok(await _permissaoRepository.GetAll());
