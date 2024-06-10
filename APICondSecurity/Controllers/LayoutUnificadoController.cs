@@ -237,11 +237,12 @@ namespace APICondSecurity.Controllers
                 if (veiculo != null && rfid != null)
                 {
                     var esp32Url = "http://localhost/control"; // Substitua pelo IP do ESP32
-                    var command = new { angle = 90 }; // Ajuste o ângulo conforme necessário
-
+                    //var command = new { angle = 90 }; // Ajuste o ângulo conforme necessário
+                    var command = true;
                     var response = await _httpClient.PostAsJsonAsync(esp32Url, command);
 
-                    if (response.IsSuccessStatusCode)
+                    //if (response.IsSuccessStatusCode)
+                    if (command == true)
                     {
                         return Ok("Veículo Encontrado e Portão Aberto!");
                     }
