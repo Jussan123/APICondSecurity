@@ -27,10 +27,10 @@ public partial class VeiculoTerceiro
     public int? IdPermissao { get; set; }
 
     [Column("id_veiculo")]
-    public int? IdVeiculo { get; set; }
+    public int IdVeiculo { get; set; }
 
     [Column("id_usuario")]
-    public int? IdUsuario { get; set; }
+    public int IdUsuario { get; set; }
 
     [ForeignKey("IdNotificacao")]
     [InverseProperty("VeiculoTerceiro")]

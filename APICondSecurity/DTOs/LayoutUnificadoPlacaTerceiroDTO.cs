@@ -2,17 +2,15 @@
 
 namespace APICondSecurity.DTOs
 {
-    public class LayoutUnificadoPlacaRfidDTO
+    public class LayoutUnificadoPlacaTerceiroDTO
     {
         [Required]
         [StringLength(255)]
         public string Placa { get; set; }
-        
-        [Required]
-        [StringLength(20)]
-        public string Numero { get; set; }
 
         public int IdPortao { get; set; }
+
+        public int IdPermissao { get; set; }
 
     }
 }

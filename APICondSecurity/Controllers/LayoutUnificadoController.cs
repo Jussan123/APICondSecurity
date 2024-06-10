@@ -29,9 +29,11 @@ namespace APICondSecurity.Controllers
         private readonly CidadeRepository _cidadeRepository;
         private readonly UfRepository _ufRepository;
         private readonly RfidRepository _rfidRepository;
+        private readonly RegistrosRepository _registrosRepository;
+        private readonly PortaoRepository _portaoRepository;
         private readonly IMapper _mapper;
 
-        public LayoutUnificadoController(HttpClient httpClient, UserRepository userRepository, ResidenciaRepository residenciaRepository, TipoUsuarioRepository tipoUsuarioRepository, VeiculoRepository veiculoRepository, VeiculoTerceiroRepository veiculoTerceiroRepository, VeiculoUsuarioRepository veiculoUsuarioRepository, CondominioRepository condominioRepository, EnderecoRepository enderecoRepository, CidadeRepository cidadeRepository, UfRepository ufRepository, RfidRepository rfidRepository , IMapper mapper)
+        public LayoutUnificadoController(HttpClient httpClient, UserRepository userRepository, ResidenciaRepository residenciaRepository, TipoUsuarioRepository tipoUsuarioRepository, VeiculoRepository veiculoRepository, VeiculoTerceiroRepository veiculoTerceiroRepository, VeiculoUsuarioRepository veiculoUsuarioRepository, CondominioRepository condominioRepository, EnderecoRepository enderecoRepository, CidadeRepository cidadeRepository, UfRepository ufRepository, RfidRepository rfidRepository, RegistrosRepository registrosRepository, PortaoRepository portaoRepository, IMapper mapper)
         {
             _httpClient = httpClient;
             _userRepository = userRepository;
@@ -45,6 +47,8 @@ namespace APICondSecurity.Controllers
             _cidadeRepository = cidadeRepository;
             _ufRepository = ufRepository;
             _rfidRepository = rfidRepository;
+            _registrosRepository = registrosRepository;
+            _portaoRepository = portaoRepository;
             _mapper = mapper;
         }
 
@@ -59,19 +63,19 @@ namespace APICondSecurity.Controllers
             }
 
             try
-            { 
+            {
                 UserDTO userDTO = new UserDTO()
                 {
-                    Name =  layoutUnificadoCadastroUsuarioDTO.Name,
-                    Email =  layoutUnificadoCadastroUsuarioDTO.Email,
-                    Senha =  layoutUnificadoCadastroUsuarioDTO.Senha,
-                    Telefone =  layoutUnificadoCadastroUsuarioDTO.Telefone,
-                    Situacao =  layoutUnificadoCadastroUsuarioDTO.Situacao,
-                    Cpf =  layoutUnificadoCadastroUsuarioDTO.Cpf
+                    Name = layoutUnificadoCadastroUsuarioDTO.Name,
+                    Email = layoutUnificadoCadastroUsuarioDTO.Email,
+                    Senha = layoutUnificadoCadastroUsuarioDTO.Senha,
+                    Telefone = layoutUnificadoCadastroUsuarioDTO.Telefone,
+                    Situacao = layoutUnificadoCadastroUsuarioDTO.Situacao,
+                    Cpf = layoutUnificadoCadastroUsuarioDTO.Cpf
                 };
 
                 var user = _mapper.Map<User>(userDTO);
-                
+
                 using var hmac = new HMACSHA512();
                 byte[] SenhaHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userDTO.Senha));
                 byte[] SenhaSalt = hmac.Key;
@@ -101,7 +105,7 @@ namespace APICondSecurity.Controllers
                 _userRepository.Incluir(user);
                 _tipoUsuarioRepository.Incluir(tipoUsuario);
                 _residenciaRepository.Incluir(residencia);
-         
+
                 await _userRepository.SaveAllAsync();
                 await _tipoUsuarioRepository.SaveAllAsync();
                 await _residenciaRepository.SaveAllAsync();
@@ -165,7 +169,7 @@ namespace APICondSecurity.Controllers
         public async Task<ActionResult> CadastroUnificadoCondominio(LayoutUnificadoCadastroCondominoDTO layoutUnificadoCadastroCondominoDTO)
         {
             try
-            { 
+            {
                 CondominioDTO condominioDTO = new CondominioDTO()
                 {
                     Nome = layoutUnificadoCadastroCondominoDTO.Nome,
@@ -227,6 +231,9 @@ namespace APICondSecurity.Controllers
                 var veiculo = _mapper.Map<Veiculo>(veiculoDTO);
                 await _veiculoRepository.GetByPlaca(veiculoDTO.Placa);
 
+                var veiculoUser = await _veiculoUsuarioRepository.GetByPlaca(veiculoDTO.Placa);
+                //var veiculoTerceiro = await _veiculoTerceiroRepository.GetByPlaca(veiculoDTO.Placa);
+
                 RfidDTO rfidDTO = new RfidDTO()
                 {
                     Numero = layoutUnificadoPlacaRfidDTO.Numero
@@ -241,6 +248,43 @@ namespace APICondSecurity.Controllers
                     var command = true;
                     var response = await _httpClient.PostAsJsonAsync(esp32Url, command);
 
+                    var portao = await _portaoRepository.Get(layoutUnificadoPlacaRfidDTO.IdPortao);
+
+                    if (portao.Nome == "Entrada")
+                    {
+                        RegistrosDTO registrosDTO = new RegistrosDTO()
+                        {
+                            DataHoraEntrada = DateTime.Now,
+                            DataHoraSaida = null,
+                            Placa = layoutUnificadoPlacaRfidDTO.Placa,
+                            IdVeiculoUsuario = veiculoUser.IdVeiculoUsuario,
+                            IdPortao = portao.IdPortao,
+                            IdVeiculoTerceiro = null,
+                            IdUsuario = veiculoUser.IdUsuario,
+                            IdVeiculo = veiculo.IdVeiculo
+                        };
+                        var registros = _mapper.Map<Registros>(registrosDTO);
+                        _registrosRepository.Incluir(registros);
+                        await _registrosRepository.SaveAllAsync();
+                    }
+                    else
+                    {
+                        RegistrosDTO registrosDTO = new RegistrosDTO()
+                        {
+                            DataHoraEntrada = null,
+                            DataHoraSaida = DateTime.Now,
+                            Placa = layoutUnificadoPlacaRfidDTO.Placa,
+                            IdVeiculoUsuario = veiculoUser.IdVeiculoUsuario,
+                            IdPortao = portao.IdPortao,
+                            IdVeiculoTerceiro = null,
+                            IdUsuario = veiculoUser.IdUsuario,
+                            IdVeiculo = veiculo.IdVeiculo
+                        };
+                        var registros = _mapper.Map<Registros>(registrosDTO);
+                        _registrosRepository.Incluir(registros);
+                        await _registrosRepository.SaveAllAsync();
+                    }
+
                     //if (response.IsSuccessStatusCode)
                     if (command == true)
                     {
@@ -253,9 +297,89 @@ namespace APICondSecurity.Controllers
                 }
 
                 return BadRequest("Veículo ou RFID não encontrado.");
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-                return BadRequest($"Ocorreu um erro ao buscar Veiculo e Rfid.");
+                return BadRequest($"Ocorreu um erro ao buscar Veiculo e Rfid.{ex.Message}");
+            }
+        }
+
+        [HttpPost("AberturaPortaoTerceiro")]
+        [Authorize]
+        public async Task<ActionResult> AbrePortaoterceiro(LayoutUnificadoPlacaTerceiroDTO layoutUnificadoPlacaTerceiroDTO)
+        {
+            try
+            {
+                VeiculoDTO veiculoDTO = new VeiculoDTO()
+                {
+                    Placa = layoutUnificadoPlacaTerceiroDTO.Placa
+                };
+                var veiculo = _mapper.Map<Veiculo>(veiculoDTO);
+                await _veiculoRepository.GetByPlaca(veiculoDTO.Placa);
+
+                //var veiculoUser = await _veiculoUsuarioRepository.GetByPlaca(veiculoDTO.Placa);
+                var veiculoTerceiro = await _veiculoTerceiroRepository.GetByPlaca(veiculoDTO.Placa);
+
+                if (veiculo != null)
+                {
+                    var esp32Url = "http://localhost/control"; // Substitua pelo IP do ESP32
+                    //var command = new { angle = 90 }; // Ajuste o ângulo conforme necessário
+                    var command = true;
+                    var response = await _httpClient.PostAsJsonAsync(esp32Url, command);
+
+                    var portao = await _portaoRepository.Get(layoutUnificadoPlacaTerceiroDTO.IdPortao);
+
+                    if (portao.Nome == "Entrada")
+                    {
+                        RegistrosDTO registrosDTO = new RegistrosDTO()
+                        {
+                            DataHoraEntrada = DateTime.Now,
+                            DataHoraSaida = null,
+                            Placa = layoutUnificadoPlacaTerceiroDTO.Placa,
+                            IdVeiculoUsuario = null,
+                            IdPortao = portao.IdPortao,
+                            IdVeiculoTerceiro = veiculoTerceiro.IdVeiculoTerceiro,
+                            IdUsuario = veiculoTerceiro.IdUsuario,
+                            IdVeiculo = veiculo.IdVeiculo
+                        };
+                        var registros = _mapper.Map<Registros>(registrosDTO);
+                        _registrosRepository.Incluir(registros);
+                        await _registrosRepository.SaveAllAsync();
+                    }
+                    else
+                    {
+                        RegistrosDTO registrosDTO = new RegistrosDTO()
+                        {
+                            DataHoraEntrada = null,
+                            DataHoraSaida = DateTime.Now,
+                            Placa = layoutUnificadoPlacaTerceiroDTO.Placa,
+                            IdVeiculoUsuario = null,
+                            IdPortao = portao.IdPortao,
+                            IdVeiculoTerceiro = veiculoTerceiro.IdVeiculoTerceiro,
+                            IdUsuario = veiculoTerceiro.IdUsuario,
+                            IdVeiculo = veiculo.IdVeiculo
+                        };
+                        var registros = _mapper.Map<Registros>(registrosDTO);
+                        _registrosRepository.Incluir(registros);
+                        await _registrosRepository.SaveAllAsync();
+                    }
+
+                    //if (response.IsSuccessStatusCode)
+                    if (command == true)
+                    {
+                        return Ok("Veículo Encontrado e Portão Aberto!");
+                    }
+                    else
+                    {
+                        return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
+                    }
+                }
+
+                return BadRequest("Veículo não encontrado.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Não foi liberado o acesso ao terceiro. {ex.Message}");
             }
         }
     }

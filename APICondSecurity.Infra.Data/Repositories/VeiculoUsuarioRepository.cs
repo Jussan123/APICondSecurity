@@ -65,9 +65,7 @@ namespace APICondSecurity.Infra.Data.Repositories
         {
             try
             {
-#pragma warning disable CS8603 // Possível retorno de referência nula.
                 return await _context.VeiculoUsuario.FirstOrDefaultAsync(c => c.IdVeiculoUsuario == IdVeiculoUsuario);
-#pragma warning restore CS8603 // Possível retorno de referência nula.
             }
             catch (Exception ex)
             {
@@ -77,13 +75,25 @@ namespace APICondSecurity.Infra.Data.Repositories
             }
         }
 
+        public async Task<VeiculoUsuario> GetByPlaca(string Placa)
+        {
+            try
+            {
+                return await _context.VeiculoUsuario.FirstOrDefaultAsync(c => c.Placa == Placa);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine("Placa não identificada para usuario.");
+                return null;
+            }
+        }
+
         public async Task<VeiculoUsuario> GetByRfid(int IdRfid)
         {
             try
             {
-#pragma warning disable CS8603 // Possível retorno de referência nula.
                 return await _context.VeiculoUsuario.FirstOrDefaultAsync(c => c.IdRfid == IdRfid);
-#pragma warning restore CS8603 // Possível retorno de referência nula.
             }
             catch (Exception ex)
             {

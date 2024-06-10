@@ -21,8 +21,9 @@ namespace APICondSecurity.Controllers
 
         [HttpPost("Cadastrar")]
         [Authorize]
-        public async Task<ActionResult> CadastrarPermissao(Permissao permissao)
+        public async Task<ActionResult> CadastrarPermissao(PermissaoDTO permissaoDTO)
         {
+            var permissao = _mapper.Map<Permissao>(permissaoDTO);
             _permissaoRepository.Incluir(permissao);
             try
             {
