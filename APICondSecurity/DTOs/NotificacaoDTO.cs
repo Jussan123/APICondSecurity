@@ -11,7 +11,6 @@ namespace APICondSecurity.DTOs
         public TimeOnly DataHora { get; set; }
 
         [Required]
-        [MaxLength(1)]
         public char? Tipo { get; set; }
 
         [Required]
@@ -21,7 +20,6 @@ namespace APICondSecurity.DTOs
 #pragma warning restore CS8618 // O campo não anulável precisa conter um valor não nulo ao sair do construtor. Considere declará-lo como anulável.
 
         [Required]
-        [MaxLength(1)]
         public char? Situacao { get; set; }
 
         [Required]

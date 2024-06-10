@@ -31,9 +31,25 @@ namespace APICondSecurity.Controllers
         private readonly RfidRepository _rfidRepository;
         private readonly RegistrosRepository _registrosRepository;
         private readonly PortaoRepository _portaoRepository;
+        private readonly PermissaoRepository _permissaoRepository;
         private readonly IMapper _mapper;
 
-        public LayoutUnificadoController(HttpClient httpClient, UserRepository userRepository, ResidenciaRepository residenciaRepository, TipoUsuarioRepository tipoUsuarioRepository, VeiculoRepository veiculoRepository, VeiculoTerceiroRepository veiculoTerceiroRepository, VeiculoUsuarioRepository veiculoUsuarioRepository, CondominioRepository condominioRepository, EnderecoRepository enderecoRepository, CidadeRepository cidadeRepository, UfRepository ufRepository, RfidRepository rfidRepository, RegistrosRepository registrosRepository, PortaoRepository portaoRepository, IMapper mapper)
+        public LayoutUnificadoController(HttpClient httpClient,
+                                         UserRepository userRepository,
+                                         ResidenciaRepository residenciaRepository,
+                                         TipoUsuarioRepository tipoUsuarioRepository,
+                                         VeiculoRepository veiculoRepository,
+                                         VeiculoTerceiroRepository veiculoTerceiroRepository,
+                                         VeiculoUsuarioRepository veiculoUsuarioRepository,
+                                         CondominioRepository condominioRepository,
+                                         EnderecoRepository enderecoRepository,
+                                         CidadeRepository cidadeRepository,
+                                         UfRepository ufRepository,
+                                         RfidRepository rfidRepository,
+                                         RegistrosRepository registrosRepository,
+                                         PortaoRepository portaoRepository,
+                                         PermissaoRepository permissaoRepository,
+                                         IMapper mapper)
         {
             _httpClient = httpClient;
             _userRepository = userRepository;
@@ -49,6 +65,7 @@ namespace APICondSecurity.Controllers
             _rfidRepository = rfidRepository;
             _registrosRepository = registrosRepository;
             _portaoRepository = portaoRepository;
+            _permissaoRepository = permissaoRepository;
             _mapper = mapper;
         }
 
@@ -232,7 +249,6 @@ namespace APICondSecurity.Controllers
                 await _veiculoRepository.GetByPlaca(veiculoDTO.Placa);
 
                 var veiculoUser = await _veiculoUsuarioRepository.GetByPlaca(veiculoDTO.Placa);
-                //var veiculoTerceiro = await _veiculoTerceiroRepository.GetByPlaca(veiculoDTO.Placa);
 
                 RfidDTO rfidDTO = new RfidDTO()
                 {
@@ -241,12 +257,17 @@ namespace APICondSecurity.Controllers
                 var rfid = _mapper.Map<Rfid>(rfidDTO);
                 await _rfidRepository.GetByTag(rfidDTO.Numero);
 
+                if (veiculoDTO.Situacao == "I")
+                {
+                    return BadRequest("Veículo não autorizado.");
+                }
+
                 if (veiculo != null && rfid != null)
                 {
                     var esp32Url = "http://localhost/control"; // Substitua pelo IP do ESP32
                     //var command = new { angle = 90 }; // Ajuste o ângulo conforme necessário
                     var command = true;
-                    var response = await _httpClient.PostAsJsonAsync(esp32Url, command);
+                    //var response = await _httpClient.PostAsJsonAsync(esp32Url, command);
 
                     var portao = await _portaoRepository.Get(layoutUnificadoPlacaRfidDTO.IdPortao);
 
@@ -292,7 +313,7 @@ namespace APICondSecurity.Controllers
                     }
                     else
                     {
-                        return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
+                        return BadRequest("entrou no if do command");// StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
                     }
                 }
 
@@ -317,15 +338,32 @@ namespace APICondSecurity.Controllers
                 var veiculo = _mapper.Map<Veiculo>(veiculoDTO);
                 await _veiculoRepository.GetByPlaca(veiculoDTO.Placa);
 
-                //var veiculoUser = await _veiculoUsuarioRepository.GetByPlaca(veiculoDTO.Placa);
+                PermissaoDTO permissaoDTO = new PermissaoDTO()
+                {
+                    IdPermissao = layoutUnificadoPlacaTerceiroDTO.IdPermissao
+                };
+                var permissao = _mapper.Map<Permissao>(permissaoDTO);
+                await _permissaoRepository.Get(permissaoDTO.IdPermissao);
+
+                if (permissao.Situacao == 'N')
+                {
+                    return BadRequest("Permissão não autorizada.");
+                }
+
                 var veiculoTerceiro = await _veiculoTerceiroRepository.GetByPlaca(veiculoDTO.Placa);
+                
+                if(veiculoDTO.Situacao == "I")
+                {
+                    return BadRequest("Veículo não autorizado.");
+                }
+                
 
                 if (veiculo != null)
                 {
                     var esp32Url = "http://localhost/control"; // Substitua pelo IP do ESP32
                     //var command = new { angle = 90 }; // Ajuste o ângulo conforme necessário
                     var command = true;
-                    var response = await _httpClient.PostAsJsonAsync(esp32Url, command);
+                    //var response = await _httpClient.PostAsJsonAsync(esp32Url, command);
 
                     var portao = await _portaoRepository.Get(layoutUnificadoPlacaTerceiroDTO.IdPortao);
 
@@ -371,10 +409,9 @@ namespace APICondSecurity.Controllers
                     }
                     else
                     {
-                        return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
+                        return BadRequest("entrou no if do command");//StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
                     }
                 }
-
                 return BadRequest("Veículo não encontrado.");
             }
             catch (Exception ex)

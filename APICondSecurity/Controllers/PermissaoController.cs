@@ -28,7 +28,12 @@ namespace APICondSecurity.Controllers
             try
             {
                 await _permissaoRepository.SaveAllAsync();
-                return Ok("Permissao cadastrada com sucesso!");
+
+                return Ok(new
+                {
+                    mensagem = "Permissao cadastrada com sucesso!",
+                    id = permissao.IdPermissao
+                });
             }
             catch (Exception ex)
             {
