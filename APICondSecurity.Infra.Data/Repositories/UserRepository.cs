@@ -176,7 +176,7 @@ namespace APICondSecurity.Infra.Data.Repositories
             var privateKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes
                 (_configuration["jwt:secretKey"]));
             var credentials = new SigningCredentials(privateKey, SecurityAlgorithms.HmacSha256);
-            var expiration = DateTime.UtcNow.AddMinutes(10);
+            var expiration = DateTime.UtcNow.AddHours(48);
 
             JwtSecurityToken token = new(
                 issuer: _configuration["jwt:issuer"],

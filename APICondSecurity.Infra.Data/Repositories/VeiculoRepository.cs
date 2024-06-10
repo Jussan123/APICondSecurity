@@ -65,9 +65,7 @@ namespace APICondSecurity.Infra.Data.Repositories
         {
             try
             {
-#pragma warning disable CS8603 // Possível retorno de referência nula.
                 return await _context.Veiculo.FirstOrDefaultAsync(c => c.IdVeiculo == IdVeiculo);
-#pragma warning restore CS8603 // Possível retorno de referência nula.
             }
             catch (Exception ex)
             {
@@ -81,9 +79,8 @@ namespace APICondSecurity.Infra.Data.Repositories
         {
             try
             {
-#pragma warning disable CS8603 // Possível retorno de referência nula.
+                
                 return await _context.Veiculo.FirstOrDefaultAsync(c => c.Placa == placa);
-#pragma warning restore CS8603 // Possível retorno de referência nula.
             }
             catch (Exception ex)
             {

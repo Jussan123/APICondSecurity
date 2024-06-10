@@ -1,11 +1,15 @@
 ﻿using APICondSecurity.DTOs;
+using APICondSecurity.Infra.Data.Interfaces;
 using APICondSecurity.Infra.Data.Models;
 using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
+using System.Net.Http;
+using System.Net.Http.Json;
 
 namespace APICondSecurity.Controllers
 {
@@ -13,6 +17,7 @@ namespace APICondSecurity.Controllers
     [Route("api/[controller]")]
     public class LayoutUnificadoController : ControllerBase
     {
+        private readonly HttpClient _httpClient;
         private readonly UserRepository _userRepository;
         private readonly ResidenciaRepository _residenciaRepository;
         private readonly TipoUsuarioRepository _tipoUsuarioRepository;
@@ -23,10 +28,12 @@ namespace APICondSecurity.Controllers
         private readonly EnderecoRepository _enderecoRepository;
         private readonly CidadeRepository _cidadeRepository;
         private readonly UfRepository _ufRepository;
+        private readonly RfidRepository _rfidRepository;
         private readonly IMapper _mapper;
 
-        public LayoutUnificadoController(UserRepository userRepository, ResidenciaRepository residenciaRepository, TipoUsuarioRepository tipoUsuarioRepository, VeiculoRepository veiculoRepository, VeiculoTerceiroRepository veiculoTerceiroRepository, VeiculoUsuarioRepository veiculoUsuarioRepository, CondominioRepository condominioRepository, EnderecoRepository enderecoRepository, CidadeRepository cidadeRepository, UfRepository ufRepository, IMapper mapper)
+        public LayoutUnificadoController(HttpClient httpClient, UserRepository userRepository, ResidenciaRepository residenciaRepository, TipoUsuarioRepository tipoUsuarioRepository, VeiculoRepository veiculoRepository, VeiculoTerceiroRepository veiculoTerceiroRepository, VeiculoUsuarioRepository veiculoUsuarioRepository, CondominioRepository condominioRepository, EnderecoRepository enderecoRepository, CidadeRepository cidadeRepository, UfRepository ufRepository, RfidRepository rfidRepository , IMapper mapper)
         {
+            _httpClient = httpClient;
             _userRepository = userRepository;
             _residenciaRepository = residenciaRepository;
             _tipoUsuarioRepository = tipoUsuarioRepository;
@@ -37,6 +44,7 @@ namespace APICondSecurity.Controllers
             _enderecoRepository = enderecoRepository;
             _cidadeRepository = cidadeRepository;
             _ufRepository = ufRepository;
+            _rfidRepository = rfidRepository;
             _mapper = mapper;
         }
 
@@ -203,6 +211,50 @@ namespace APICondSecurity.Controllers
             catch (Exception ex)
             {
                 return BadRequest($"Ocorreu um erro ao salvar o condominio: {ex.Message}");
+            }
+        }
+
+        [HttpPost("AberturaPortao")]
+        [Authorize]
+        public async Task<ActionResult> AbrePortao(LayoutUnificadoPlacaRfidDTO layoutUnificadoPlacaRfidDTO)
+        {
+            try
+            {
+                VeiculoDTO veiculoDTO = new VeiculoDTO()
+                {
+                    Placa = layoutUnificadoPlacaRfidDTO.Placa
+                };
+                var veiculo = _mapper.Map<Veiculo>(veiculoDTO);
+                await _veiculoRepository.GetByPlaca(veiculoDTO.Placa);
+
+                RfidDTO rfidDTO = new RfidDTO()
+                {
+                    Numero = layoutUnificadoPlacaRfidDTO.Numero
+                };
+                var rfid = _mapper.Map<Rfid>(rfidDTO);
+                await _rfidRepository.GetByTag(rfidDTO.Numero);
+
+                if (veiculo != null && rfid != null)
+                {
+                    var esp32Url = "http://localhost/control"; // Substitua pelo IP do ESP32
+                    var command = new { angle = 90 }; // Ajuste o ângulo conforme necessário
+
+                    var response = await _httpClient.PostAsJsonAsync(esp32Url, command);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return Ok("Veículo Encontrado e Portão Aberto!");
+                    }
+                    else
+                    {
+                        return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
+                    }
+                }
+
+                return BadRequest("Veículo ou RFID não encontrado.");
+            } catch (Exception ex)
+            {
+                return BadRequest($"Ocorreu um erro ao buscar Veiculo e Rfid.");
             }
         }
     }

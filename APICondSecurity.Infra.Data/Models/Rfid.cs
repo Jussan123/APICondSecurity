@@ -16,10 +16,9 @@ public partial class Rfid
     public int IdRfid { get; set; }
 
     [Column("numero")]
-    public int Numero { get; set; }
+    public string Numero { get; set; }
 
     [Column("situacao")]
-    [MaxLength(1)]
     public char Situacao { get; set; }
 
     [Column("id_condominio")]
