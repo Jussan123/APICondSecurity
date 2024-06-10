@@ -2,15 +2,17 @@
 
 namespace APICondSecurity.DTOs
 {
-    public class VeiculoTerceiroDTO
+    public class LayoutUnificadoPlacaRfidDTO
     {
-        public int IdVeiculoTerceiro { get; set; }
-
         [Required]
         [StringLength(255)]
         public string Placa { get; set; }
-        public int IdVeiculo { get; set; }
+        
         [Required]
-        public int IdUsuario { get; set; }
+        [StringLength(20)]
+        public string Numero { get; set; }
+
+        public int IdPortao { get; set; }
+
     }
 }

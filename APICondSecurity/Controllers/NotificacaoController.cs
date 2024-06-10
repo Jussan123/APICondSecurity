@@ -2,6 +2,7 @@
 using APICondSecurity.Infra.Data.Models;
 using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
@@ -19,6 +20,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("Cadastrar")]
+        [Authorize]
         public async Task<ActionResult> CadastrarNotificacao(NotificacaoDTO notificacaoDTO)
         {
             var notificacao = _mapper.Map<Notificacao>(notificacaoDTO);
@@ -64,6 +66,7 @@ namespace APICondSecurity.Controllers
         */
 
         [HttpDelete("Excluir")]
+        [Authorize]
         public async Task<ActionResult> Delete(int IdNotificacao)
         {
             var notificacao = _notificacaoRepository.Get(IdNotificacao);
@@ -84,6 +87,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("Get")]
+        [Authorize]
         public async Task<ActionResult<NotificacaoRepository>> Get(int IdNotificacao)
         {
             var notificacao = await _notificacaoRepository.Get(IdNotificacao);
@@ -96,6 +100,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("GetAll")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<NotificacaoRepository>>> GetNotificacao()
         {
             return Ok(await _notificacaoRepository.GetAll());

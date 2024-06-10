@@ -1,6 +1,7 @@
 ﻿
 using APICondSecurity.Account;
 using APICondSecurity.Infra.Data.Context;
+using APICondSecurity.Infra.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -44,7 +45,7 @@ namespace APICondSecurity.Identity
             var privateKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes
                 (_configuration["jwt:secretKey"]));
             var credentials = new SigningCredentials(privateKey, SecurityAlgorithms.HmacSha256);
-            var expiration = DateTime.UtcNow.AddMinutes(10);
+            var expiration = DateTime.UtcNow.AddHours(48);
 
             JwtSecurityToken token = new(
                 issuer: _configuration["jwt:issuer"],
@@ -65,6 +66,11 @@ namespace APICondSecurity.Identity
                 return false;
             }
             return true;
+        }
+
+        public async Task<User> GetUserByEmail(string email)
+        {
+            return await _context.User.Where(x => x.Email.ToUpper() == email.ToUpper()).FirstOrDefaultAsync();
         }
     }
 }

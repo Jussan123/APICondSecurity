@@ -11,5 +11,6 @@ namespace APICondSecurity.Infra.Data.Interfaces
         Task<VeiculoUsuario> GetByRfid(int IdRfid);
         Task<IEnumerable<VeiculoUsuario>> GetAll();
         Task<bool> SaveAllAsync();
+        Task<VeiculoUsuario> GetByPlaca(string placa);
     }
 }

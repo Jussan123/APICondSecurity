@@ -77,6 +77,20 @@ namespace APICondSecurity.Infra.Data.Repositories
             }
         }
 
+        public async Task<Rfid> GetByTag(string numero)
+        {
+            try
+            {
+                return await _context.Rfid.FirstOrDefaultAsync(c => c.Numero == numero);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine($"Erro ao buscar rfid: {ex.Message}");
+                throw;
+            }
+        }
+
         public async Task<IEnumerable<Rfid>> GetAll()
         {
             try

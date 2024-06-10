@@ -2,6 +2,7 @@
 using APICondSecurity.Infra.Data.Models;
 using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
@@ -19,6 +20,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("Cadastrar")]
+        [Authorize]
         public async Task<ActionResult> CadastrarResidencia(ResidenciaDTO residenciaDTO)
         {
             var residencia = _mapper.Map<Residencia>(residenciaDTO);
@@ -35,6 +37,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPut("Alterar")]
+        [Authorize]
         public async Task<ActionResult> UpdateResidencia(ResidenciaDTO residenciaDTO)
         {
             if (residenciaDTO.IdResidencia == null)
@@ -66,6 +69,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpDelete("Excluir")]
+        [Authorize]
         public async Task<ActionResult> Delete(int IdResidencia)
         {
             var residencia = _residenciaRepository.Get(IdResidencia);
@@ -86,6 +90,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("Get")]
+        [Authorize]
         public async Task<ActionResult<ResidenciaRepository>> Get(int IdResidencia)
         {
             var residencia = await _residenciaRepository.Get(IdResidencia);
@@ -98,6 +103,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("GetAll")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<ResidenciaRepository>>> GetResidencia()
         {
             return Ok(await _residenciaRepository.GetAll());
