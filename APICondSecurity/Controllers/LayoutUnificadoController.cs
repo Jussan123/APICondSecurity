@@ -10,6 +10,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Net.Http;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.SignalR;
 
 namespace APICondSecurity.Controllers
 {
@@ -32,6 +33,7 @@ namespace APICondSecurity.Controllers
         private readonly RegistrosRepository _registrosRepository;
         private readonly PortaoRepository _portaoRepository;
         private readonly PermissaoRepository _permissaoRepository;
+        private readonly IHubContext<NotificationHub> _hubContext;
         private readonly IMapper _mapper;
 
         public LayoutUnificadoController(HttpClient httpClient,
@@ -49,6 +51,7 @@ namespace APICondSecurity.Controllers
                                          RegistrosRepository registrosRepository,
                                          PortaoRepository portaoRepository,
                                          PermissaoRepository permissaoRepository,
+                                         IHubContext<NotificationHub> hubContext,
                                          IMapper mapper)
         {
             _httpClient = httpClient;
@@ -66,6 +69,7 @@ namespace APICondSecurity.Controllers
             _registrosRepository = registrosRepository;
             _portaoRepository = portaoRepository;
             _permissaoRepository = permissaoRepository;
+            _hubContext = hubContext;
             _mapper = mapper;
         }
 
@@ -259,6 +263,8 @@ namespace APICondSecurity.Controllers
 
                 if (veiculoDTO.Situacao == "I")
                 {
+                    await _hubContext.Clients.All.SendAsync("ReceiveNotification", "Veiculo Não autorizado placa:", layoutUnificadoPlacaRfidDTO.Placa);
+
                     return BadRequest("Veículo não autorizado.");
                 }
 
