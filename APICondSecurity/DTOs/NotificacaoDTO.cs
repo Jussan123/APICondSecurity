@@ -22,6 +22,8 @@ namespace APICondSecurity.DTOs
         [Required]
         public char? Situacao { get; set; }
 
+        public string Mensagem { get; set; }
+
         [Required]
         public int IdUsuario { get; set; }
     }
