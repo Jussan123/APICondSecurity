@@ -2,6 +2,7 @@
 using APICondSecurity.Infra.Data.Models;
 using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
@@ -19,6 +20,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("Cadastrar")]
+        [Authorize]
         public async Task<ActionResult> CadastrarTipoUsuario(TipoUsuarioDTO tipoUsuarioDTO)
         {
             var tipoUsuario = _mapper.Map<TipoUsuario>(tipoUsuarioDTO);
@@ -35,6 +37,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPut("Alterar")]
+        [Authorize]
         public async Task<ActionResult> UpdateTipoUsuario(TipoUsuarioDTO tipoUsuarioDTO)
         {
             if (tipoUsuarioDTO.IdTipoUsuario == null)
@@ -63,6 +66,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpDelete("Excluir")]
+        [Authorize]
         public async Task<ActionResult> Delete(int IdTipoUsuario)
         {
             var tipoUsuario = _tipoUsuarioRepository.Get(IdTipoUsuario);
@@ -83,6 +87,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("Get")]
+        [Authorize]
         public async Task<ActionResult<TipoUsuarioRepository>> Get(int IdTipoUsuario)
         {
             var tipoUsuario = await _tipoUsuarioRepository.Get(IdTipoUsuario);
@@ -95,6 +100,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("GetAll")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<TipoUsuarioRepository>>> GetTipoUsuario()
         {
             return Ok(await _tipoUsuarioRepository.GetAll());

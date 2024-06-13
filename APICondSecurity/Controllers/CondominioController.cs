@@ -2,6 +2,7 @@
 using APICondSecurity.Infra.Data.Models;
 using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
@@ -19,6 +20,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("Cadastrar")]
+        [Authorize]
         public async Task<ActionResult> CadastrarCondominio(CondominioDTO condominioDTO)
         {
             var condominio = _mapper.Map<Condominio>(condominioDTO);
@@ -35,6 +37,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPut("Alterar")]
+        [Authorize]
         public async Task<ActionResult> UpdateCondominio(CondominioDTO condominioDTO)
         {
             if (condominioDTO.IdCondominio == null)
@@ -63,6 +66,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpDelete("Excluir")]
+        [Authorize]
         public async Task<ActionResult> Delete(int IdCondominio)
         {
             var condominio = _condominioRepository.Get(IdCondominio);
@@ -83,6 +87,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("Get")]
+        [Authorize]
         public async Task<ActionResult<CondominioRepository>> Get(int IdCondominio)
         {
             var condominio = await _condominioRepository.Get(IdCondominio);
@@ -95,6 +100,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("GetAll")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<CondominioRepository>>> GetCondominio()
         {
             return Ok(await _condominioRepository.GetAll());

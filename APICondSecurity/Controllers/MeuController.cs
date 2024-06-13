@@ -5,6 +5,7 @@
     }
 }*/
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 public class MeuController : ControllerBase
 {
     [HttpGet]
+    [Authorize]
     public IActionResult Get()
     {
         return Ok("Minha primeira API em C#!");

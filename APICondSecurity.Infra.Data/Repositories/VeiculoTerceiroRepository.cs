@@ -65,15 +65,27 @@ namespace APICondSecurity.Infra.Data.Repositories
         {
             try
             {
-#pragma warning disable CS8603 // Possível retorno de referência nula.
                 return await _context.VeiculoTerceiro.FirstOrDefaultAsync(c => c.IdVeiculoTerceiro == IdVeiculoTerceiro);
-#pragma warning restore CS8603 // Possível retorno de referência nula.
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 Console.WriteLine($"Erro ao buscar veiculoTerceiro: {ex.Message}");
                 throw;
+            }
+        }
+
+        public async Task<VeiculoTerceiro> GetByPlaca(string Placa)
+        {
+            try
+            {
+                return await _context.VeiculoTerceiro.FirstOrDefaultAsync(c => c.Placa == Placa);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine("Placa não identificada para terceiro.");
+                return null;
             }
         }
 

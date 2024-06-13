@@ -2,6 +2,7 @@
 using APICondSecurity.Infra.Data.Models;
 using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
@@ -19,6 +20,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("Cadastrar")]
+        [Authorize]
         public async Task<ActionResult> CadastrarEndereco(EnderecoDTO enderecoDTO)
         {
             var endereco = _mapper.Map<Endereco>(enderecoDTO);
@@ -35,6 +37,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPut("Alterar")]
+        [Authorize]
         public async Task<ActionResult> UpdateEndereco(EnderecoDTO enderecoDTO)
         {
             if (enderecoDTO.IdEndereco == null)
@@ -65,6 +68,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpDelete("Excluir")]
+        [Authorize]
         public async Task<ActionResult> Delete(int IdEndereco)
         {
             var endereco = _enderecoRepository.Get(IdEndereco);
@@ -85,6 +89,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("Get")]
+        [Authorize]
         public async Task<ActionResult<EnderecoRepository>> Get(int IdEndereco)
         {
             var endereco = await _enderecoRepository.Get(IdEndereco);
@@ -97,6 +102,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("GetAll")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<EnderecoRepository>>> GetEndereco()
         {
             return Ok(await _enderecoRepository.GetAll());

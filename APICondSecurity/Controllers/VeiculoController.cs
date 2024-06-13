@@ -2,6 +2,7 @@
 using APICondSecurity.Infra.Data.Models;
 using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
@@ -20,6 +21,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("Cadastrar")]
+        [Authorize]
         public async Task<ActionResult> CadastrarVeiculo(VeiculoDTO veiculoDTO)
         {
             var veiculo = _mapper.Map<Veiculo>(veiculoDTO);
@@ -36,6 +38,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPut("Alterar")]
+        [Authorize]
         public async Task<ActionResult> UpdateVeiculo(VeiculoDTO veiculoDTO)
         {
             if (veiculoDTO.IdVeiculo == null)
@@ -67,6 +70,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpDelete("Excluir")]
+        [Authorize]
         public async Task<ActionResult> Delete(int IdVeiculo)
         {
             var veiculo = _veiculoRepository.Get(IdVeiculo);
@@ -87,6 +91,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("Get")]
+        [Authorize]
         public async Task<ActionResult<VeiculoRepository>> Get(int IdVeiculo)
         {
             var veiculo = await _veiculoRepository.Get(IdVeiculo);
@@ -100,6 +105,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("GetAll")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<VeiculoRepository>>> GetVeiculo()
         {
             return Ok(await _veiculoRepository.GetAll());

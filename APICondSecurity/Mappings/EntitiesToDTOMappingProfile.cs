@@ -26,13 +26,13 @@ public class EntitiesToDTOMappingProfile : Profile
         CreateMap<VeiculoUsuario, VeiculoUsuarioDTO>().ReverseMap();
         CreateMap<User, UserDTO>().ReverseMap();
 
-        CreateMap<LayoutUnificadoCadastroUsuarioDTO, UserDTO>()
+        CreateMap<LayoutUnificadoCadastroUsuarioDTO, UserDTO>().ReverseMap();/*
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
             .ForMember(dest => dest.Senha, opt => opt.MapFrom(src => src.Senha))
             .ForMember(dest => dest.Telefone, opt => opt.MapFrom(src => src.Telefone))
             .ForMember(dest => dest.Situacao, opt => opt.MapFrom(src => src.Situacao))
-            .ForMember(dest => dest.Cpf, opt => opt.MapFrom(src => src.Cpf));
+            .ForMember(dest => dest.Cpf, opt => opt.MapFrom(src => src.Cpf));*/
 
         CreateMap<LayoutUnificadoCadastroUsuarioDTO, TipoUsuarioDTO> ()
             .ForMember(dest => dest.Tipo, opt => opt.MapFrom(src => src.Tipo));

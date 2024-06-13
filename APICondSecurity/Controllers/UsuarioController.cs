@@ -2,6 +2,7 @@
 using APICondSecurity.Infra.Data.Models;
 using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICondSecurity.Controllers
@@ -19,6 +20,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPost("Cadastrar")]
+        [Authorize]
         public async Task<ActionResult> CadastrarUsuario(UsuarioDTO usuarioDTO)
         {
             try
@@ -35,6 +37,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpPut("Alterar")]
+        [Authorize]
         public async Task<ActionResult> UpdateUsuario(UsuarioDTO usuarioDTO)
         {
             if (usuarioDTO.IdUsuario == null)
@@ -65,6 +68,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpDelete("Excluir")]
+        [Authorize]
         public async Task<ActionResult> Delete(int IdUsuario)
         {
             var usuario = _usuarioRepository.Get(IdUsuario);
@@ -85,6 +89,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("Get")]
+        [Authorize]
         public async Task<ActionResult<UsuarioRepository>> Get(int IdUsuario)
         {
             var usuario = await _usuarioRepository.Get(IdUsuario);
@@ -97,6 +102,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("GetAll")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<UsuarioRepository>>> GetUsuario()
         {
             return Ok(await _usuarioRepository.GetAll());

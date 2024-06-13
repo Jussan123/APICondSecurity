@@ -10,5 +10,6 @@ namespace APICondSecurity.Infra.Data.Interfaces
         Task<VeiculoTerceiro> Get(int id);
         Task<IEnumerable<VeiculoTerceiro>> GetAll();
         Task<bool> SaveAllAsync();
+        Task<VeiculoTerceiro> GetByPlaca(string placa);
     }
 }

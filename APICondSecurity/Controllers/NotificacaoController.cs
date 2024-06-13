@@ -2,7 +2,10 @@
 using APICondSecurity.Infra.Data.Models;
 using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+
 
 namespace APICondSecurity.Controllers
 {
@@ -11,21 +14,36 @@ namespace APICondSecurity.Controllers
     public class NotificacaoController : Controller
     {
         private readonly NotificacaoRepository _notificacaoRepository;
+        private readonly IHubContext<NotificationHub> _hubContext;
         private readonly IMapper _mapper;
-        public NotificacaoController(NotificacaoRepository notificacaoRepository, IMapper mapper)
+        public NotificacaoController(NotificacaoRepository notificacaoRepository, IHubContext<NotificationHub> hubContext, IMapper mapper)
         {
             _mapper = mapper;
+            _hubContext = hubContext;
             _notificacaoRepository = notificacaoRepository;
         }
 
         [HttpPost("Cadastrar")]
+        [Authorize]
         public async Task<ActionResult> CadastrarNotificacao(NotificacaoDTO notificacaoDTO)
         {
-            var notificacao = _mapper.Map<Notificacao>(notificacaoDTO);
-            _notificacaoRepository.Incluir(notificacao);
             try
             {
+                var notificacao = _mapper.Map<Notificacao>(notificacaoDTO);
+                _notificacaoRepository.Incluir(notificacao);
                 await _notificacaoRepository.SaveAllAsync();
+
+                var notificationDetails = new
+                {
+                    Tipo = notificacaoDTO.Tipo,
+                    Id = notificacao.IdNotificacao,
+                    DataHora = DateTime.Now,
+                    Mensagem = notificacaoDTO.Mensagem
+                };
+
+                // Envia a notificação via SignalR
+                await _hubContext.Clients.All.SendAsync("ReceiveNotification", notificationDetails);
+
                 return Ok("Notificacao cadastrada com sucesso!");
             }
             catch (Exception ex)
@@ -64,6 +82,7 @@ namespace APICondSecurity.Controllers
         */
 
         [HttpDelete("Excluir")]
+        [Authorize]
         public async Task<ActionResult> Delete(int IdNotificacao)
         {
             var notificacao = _notificacaoRepository.Get(IdNotificacao);
@@ -84,6 +103,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("Get")]
+        [Authorize]
         public async Task<ActionResult<NotificacaoRepository>> Get(int IdNotificacao)
         {
             var notificacao = await _notificacaoRepository.Get(IdNotificacao);
@@ -96,6 +116,7 @@ namespace APICondSecurity.Controllers
         }
 
         [HttpGet("GetAll")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<NotificacaoRepository>>> GetNotificacao()
         {
             return Ok(await _notificacaoRepository.GetAll());
