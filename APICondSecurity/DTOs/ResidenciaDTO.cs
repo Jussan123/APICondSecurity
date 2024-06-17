@@ -15,5 +15,6 @@ namespace APICondSecurity.DTOs
 
         [StringLength(50)]
         public string Rua { get; set; }
+        public int IdCondominio { get; set; }
     }
 }
