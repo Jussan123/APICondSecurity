@@ -15,6 +15,7 @@ namespace APICondSecurity.Infra.Data.EntitiesConfiguration
             builder.Property(x => x.Email).HasMaxLength(250).IsRequired();
             builder.Property(x => x.Telefone).HasMaxLength(255).IsRequired();
             builder.Property(x => x.Situacao).HasMaxLength(2).IsRequired();
+            builder.Property(x => x.IdTipoUsuario).IsRequired();
         }
     }
 }

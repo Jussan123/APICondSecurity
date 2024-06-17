@@ -1,9 +1,12 @@
 ﻿using APICondSecurity.DTOs;
+using APICondSecurity.Infra.Data.Interfaces;
 using APICondSecurity.Infra.Data.Models;
 using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace APICondSecurity.Controllers
 {
@@ -11,101 +14,109 @@ namespace APICondSecurity.Controllers
     [Route("api/[controller]")]
     public class UsuarioController : Controller
     {
-        private readonly UsuarioRepository _usuarioRepository;
+        private readonly UserRepository _userRepository;
         private readonly IMapper _mapper;
-        public UsuarioController(UsuarioRepository usuarioRepository, IMapper mapper)
+        public UsuarioController(UserRepository userRepository, IMapper mapper)
         {
             _mapper = mapper;
-            _usuarioRepository = usuarioRepository;
+            _userRepository = userRepository;
         }
 
         [HttpPost("Cadastrar")]
         [Authorize]
-        public async Task<ActionResult> CadastrarUsuario(UsuarioDTO usuarioDTO)
+        public async Task<ActionResult> CadastrarUser(UserDTO userDTO)
         {
             try
             {
-                var usuario = _mapper.Map<Usuario>(usuarioDTO);
-                await _usuarioRepository.Incluir(usuario);
-                await _usuarioRepository.SaveAllAsync();
-                return Ok("Usuario cadastrado com sucesso!");
+                var user = _mapper.Map<User>(userDTO);
+                await _userRepository.Incluir(user);
+                await _userRepository.SaveAllAsync();
+                return Ok("User cadastrado com sucesso!");
             }
             catch (Exception ex)
             {
-                return BadRequest($"Ocorreu um erro ao salvar o usuario: {ex.Message}");
+                return BadRequest($"Ocorreu um erro ao salvar o user: {ex.Message}");
             }
         }
 
         [HttpPut("Alterar")]
         [Authorize]
-        public async Task<ActionResult> UpdateUsuario(UsuarioDTO usuarioDTO)
+        public async Task<ActionResult> UpdateUser(UserDTO userDTO)
         {
-            if (usuarioDTO.IdUsuario == null)
+            if (userDTO.IdUser == null)
             {
                 return BadRequest("Não foi possível alterar usuário. è necessário informar o Id.");
             }
-            var usuarioExiste = await _usuarioRepository.Get(usuarioDTO.IdUsuario);
-            if (usuarioExiste == null)
+            var userExiste = await _userRepository.Get(userDTO.IdUser);
+            if (userExiste == null)
             {
                 return NotFound("Usuário não encontrado.");
             }
-            usuarioExiste.Nome = usuarioDTO.Nome;
-            usuarioExiste.Telefone = usuarioDTO.Telefone;
-            usuarioExiste.Email = usuarioDTO.Email;
-            usuarioExiste.Senha = usuarioDTO.Senha;
-            usuarioExiste.Situacao = usuarioDTO.Situacao;
+
+            using var hmac = new HMACSHA512();
+            byte[] SenhaHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userDTO.Senha));
+            byte[] SenhaSalt = hmac.Key;
+            byte[] CpfHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userDTO.Cpf));
+            byte[] CpfSalt = hmac.Key;
+
+
+            userExiste.Name = userDTO.Name;
+            userExiste.Telefone = userDTO.Telefone;
+            userExiste.Email = userDTO.Email;
+            userExiste.Situacao = userDTO.Situacao;
+            userExiste.IdTipoUsuario = userDTO.IdTipoUsuario;
 
             try
             {
-                _usuarioRepository.Alterar(usuarioExiste);
-                await _usuarioRepository.SaveAllAsync();
-                return Ok("Usuario alterada com sucesso");
+                _userRepository.Alterar(userExiste);
+                await _userRepository.SaveAllAsync();
+                return Ok("User alterada com sucesso");
             }
             catch (Exception ex)
             {
-                return BadRequest($"Erro ao alterar a usuario: {ex.Message}");
+                return BadRequest($"Erro ao alterar a user: {ex.Message}");
             }
         }
 
         [HttpDelete("Excluir")]
         [Authorize]
-        public async Task<ActionResult> Delete(int IdUsuario)
+        public async Task<ActionResult> Delete(int IdUser)
         {
-            var usuario = _usuarioRepository.Get(IdUsuario);
-            if (usuario != null)
+            var user = _userRepository.Get(IdUser);
+            if (user != null)
             {
-                _usuarioRepository.ExcluirUser(await usuario);
+                _userRepository.ExcluirUser(await user);
                 try
                 {
-                    await _usuarioRepository.SaveAllAsync();
-                    return Ok("Usuario excluída com sucesso.");
+                    await _userRepository.SaveAllAsync();
+                    return Ok("User excluída com sucesso.");
                 }
                 catch (Exception ex)
                 {
-                    return BadRequest($"Ocorreu um erro ao excluir a usuario: {ex.Message}");
+                    return BadRequest($"Ocorreu um erro ao excluir a user: {ex.Message}");
                 }
             }
-            return NotFound("Id da usuario não encontrado.");
+            return NotFound("Id da user não encontrado.");
         }
 
         [HttpGet("Get")]
         [Authorize]
-        public async Task<ActionResult<UsuarioRepository>> Get(int IdUsuario)
+        public async Task<ActionResult<UserRepository>> Get(int IdUser)
         {
-            var usuario = await _usuarioRepository.Get(IdUsuario);
-            if (usuario == null)
+            var user = await _userRepository.Get(IdUser);
+            if (user == null)
             {
-                return NotFound("Usuario Não encontrada para o Id informado.");
+                return NotFound("User Não encontrada para o Id informado.");
             }
-            var usuarioDTO = _mapper.Map<UsuarioDTO>(usuario);
-            return Ok(usuarioDTO);
+            var userDTO = _mapper.Map<UserDTO>(user);
+            return Ok(userDTO);
         }
 
         [HttpGet("GetAll")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<UsuarioRepository>>> GetUsuario()
+        public async Task<ActionResult<IEnumerable<UserRepository>>> GetUser()
         {
-            return Ok(await _usuarioRepository.GetAll());
+            return Ok(await _userRepository.GetAll());
         }
     }
 }

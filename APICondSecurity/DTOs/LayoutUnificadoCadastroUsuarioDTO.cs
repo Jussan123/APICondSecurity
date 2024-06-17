@@ -39,5 +39,6 @@ namespace APICondSecurity.DTOs
         public string Tipo { get; set; }
         public int IdTipoUsuario { get; set; }
         public int IdResidencia { get; set; }
+        public int IdCondominio { get; set; }
     }
 }

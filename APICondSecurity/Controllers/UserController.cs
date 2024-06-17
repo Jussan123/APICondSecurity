@@ -51,11 +51,7 @@ namespace APICondSecurity.Controllers
                 user.CpfHash = CpfHash;
                 user.CpfSalt = CpfSalt;
             }
-            /*
-            user.SenhaSalt = [10];
-            user.SenhaHash = Encoding.ASCII.GetBytes(userDTO.Senha);
-            user.CpfSalt = [10];
-            user.CpfHash = Encoding.ASCII.GetBytes(userDTO.Cpf);*/
+            
 
             var userN = await _userService.Incluir(user);
             if (userN == null)
@@ -95,7 +91,8 @@ namespace APICondSecurity.Controllers
             var token = _userService.GenerateToken(user.Id_user, user.Email);
             return new UserToken
             {
-                Token = token
+                Token = token,
+                UserId = user.Id_user
             };
         }
         
