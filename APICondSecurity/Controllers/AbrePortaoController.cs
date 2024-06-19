@@ -27,6 +27,7 @@ namespace APICondSecurity.Controllers
         private readonly RegistrosRepository _registrosRepository;
         private readonly PortaoRepository _portaoRepository;
         private readonly PermissaoRepository _permissaoRepository;
+        private readonly ITemporaryStorageService _temporaryStorageService;
         private readonly IHubContext<NotificationHub> _hubContext;
         private readonly IMapper _mapper;
 
@@ -39,6 +40,7 @@ namespace APICondSecurity.Controllers
                                          RegistrosRepository registrosRepository,
                                          PortaoRepository portaoRepository,
                                          PermissaoRepository permissaoRepository,
+                                         ITemporaryStorageService temporaryStorageService,
                                          IHubContext<NotificationHub> hubContext,
                                          IMapper mapper)
         {
@@ -51,8 +53,39 @@ namespace APICondSecurity.Controllers
             _registrosRepository = registrosRepository;
             _portaoRepository = portaoRepository;
             _permissaoRepository = permissaoRepository;
+            _temporaryStorageService = temporaryStorageService;
             _hubContext = hubContext;
             _mapper = mapper;
+        }
+
+        [HttpPost("ReceberRfid")]
+        [Authorize]
+        public ActionResult ReceberRfid([FromBody] RfidDTO rfidDTO)
+        {
+            try
+            {
+                _temporaryStorageService.StoreRfid(rfidDTO.Numero);
+                return Ok("RFID recebido com sucesso.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Ocorreu um erro ao receber o RFID: {ex.Message}");
+            }
+        }
+
+        [HttpPost("ReceberTerceiro")]
+        [Authorize]
+        public ActionResult ReceberTerceiro([FromBody] VeiculoTerceiroDTO veiculoTerceiroDTO)
+        {
+            try
+            {
+                _temporaryStorageService.StorePlaca(veiculoTerceiroDTO.Placa);
+                return Ok("Terceiro recebido com sucesso.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Ocorreu um erro ao receber o Terceiro: {ex.Message}");
+            }
         }
 
         [HttpPost("AberturaPortao")]
@@ -61,6 +94,13 @@ namespace APICondSecurity.Controllers
         {
             try
             {
+
+                var rfid = _temporaryStorageService.GetRfid();
+                if (rfid == null)
+                {
+                    return BadRequest("RFID não recebido.");
+                }
+
                 VeiculoDTO veiculoDTO = new VeiculoDTO()
                 {
                     Placa = layoutUnificadoPlacaRfidDTO.Placa
@@ -74,7 +114,7 @@ namespace APICondSecurity.Controllers
                 {
                     Numero = layoutUnificadoPlacaRfidDTO.Numero
                 };
-                var rfid = _mapper.Map<Rfid>(rfidDTO);
+                var rfidUse = _mapper.Map<Rfid>(rfidDTO);
                 await _rfidRepository.GetByTag(rfidDTO.Numero);
 
                 if (veiculoDTO.Situacao == "I")
@@ -84,7 +124,7 @@ namespace APICondSecurity.Controllers
                     return BadRequest("Veículo não autorizado.");
                 }
 
-                if (veiculo != null && rfid != null)
+                if (veiculo != null && rfidUse != null)
                 {
                     var esp32Url = "http://localhost/control"; // Substitua pelo IP do ESP32
                     //var command = new { angle = 90 }; // Ajuste o ângulo conforme necessário
@@ -104,7 +144,8 @@ namespace APICondSecurity.Controllers
                             IdPortao = portao.IdPortao,
                             IdVeiculoTerceiro = null,
                             IdUsuario = veiculoUser.IdUsuario,
-                            IdVeiculo = veiculo.IdVeiculo
+                            IdVeiculo = veiculo.IdVeiculo,
+                            Tag = rfidUse.Numero
                         };
                         var registros = _mapper.Map<Registros>(registrosDTO);
                         _registrosRepository.Incluir(registros);
@@ -121,7 +162,8 @@ namespace APICondSecurity.Controllers
                             IdPortao = portao.IdPortao,
                             IdVeiculoTerceiro = null,
                             IdUsuario = veiculoUser.IdUsuario,
-                            IdVeiculo = veiculo.IdVeiculo
+                            IdVeiculo = veiculo.IdVeiculo,
+                            Tag = rfidUse.Numero
                         };
                         var registros = _mapper.Map<Registros>(registrosDTO);
                         _registrosRepository.Incluir(registros);
@@ -153,6 +195,12 @@ namespace APICondSecurity.Controllers
         {
             try
             {
+                var placaTerceiro = _temporaryStorageService.GetPlaca();
+                if (placaTerceiro == null)
+                {
+                    return BadRequest("Placa não encontrada!");
+                }
+
                 VeiculoDTO veiculoDTO = new VeiculoDTO()
                 {
                     Placa = layoutUnificadoPlacaTerceiroDTO.Placa
@@ -200,7 +248,8 @@ namespace APICondSecurity.Controllers
                             IdPortao = portao.IdPortao,
                             IdVeiculoTerceiro = veiculoTerceiro.IdVeiculoTerceiro,
                             IdUsuario = veiculoTerceiro.IdUsuario,
-                            IdVeiculo = veiculo.IdVeiculo
+                            IdVeiculo = veiculo.IdVeiculo,
+                            Tag = null
                         };
                         var registros = _mapper.Map<Registros>(registrosDTO);
                         _registrosRepository.Incluir(registros);
@@ -217,7 +266,8 @@ namespace APICondSecurity.Controllers
                             IdPortao = portao.IdPortao,
                             IdVeiculoTerceiro = veiculoTerceiro.IdVeiculoTerceiro,
                             IdUsuario = veiculoTerceiro.IdUsuario,
-                            IdVeiculo = veiculo.IdVeiculo
+                            IdVeiculo = veiculo.IdVeiculo,
+                            Tag = null
                         };
                         var registros = _mapper.Map<Registros>(registrosDTO);
                         _registrosRepository.Incluir(registros);

@@ -18,6 +18,9 @@ namespace APICondSecurity.Controllers
         [Authorize]
         public async Task<ActionResult> CadastrarCidade(CidadeDTO cidadeDTO)
         {
+            
+
+
             var cidadeIBGEExiste = await _cidadeRepository.Get(cidadeDTO.CidadeIbge);
             if (cidadeIBGEExiste != null)
             {

@@ -21,6 +21,7 @@ namespace APICondSecurity.DTOs
         public int IdUsuario { get; set; }
         [Required]
         public int IdVeiculo { get; set; }
+        public string Tag { get; set; }
 
     }
 }

@@ -10,7 +10,7 @@ namespace APICondSecurity.DTOs
         [StringLength(255)]
         public string Placa { get; set; }
         public int IdVeiculo { get; set; }
-        [Required]
+        
         public int IdUsuario { get; set; }
     }
 }
