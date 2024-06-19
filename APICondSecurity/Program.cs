@@ -57,6 +57,7 @@ builder.Services.AddScoped<UsuarioRepository>();
 builder.Services.AddScoped<VeiculoRepository>();
 builder.Services.AddScoped<VeiculoUsuarioRepository>();
 builder.Services.AddScoped<VeiculoTerceiroRepository>();
+builder.Services.AddSingleton<ITemporaryStorageService, TemporaryStorageService>();
 
 
 

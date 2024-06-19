@@ -41,6 +41,10 @@ public partial class Registros
     [Column("id_veiculo")]
     public int? IdVeiculo { get; set; }
 
+    [Column("tag")]
+    [StringLength(18)]
+    public string Tag { get; set; }
+
     [ForeignKey("IdPortao")]
     [InverseProperty("Registros")]
     public virtual Portao IdPortaoNavigation { get; set; }

@@ -61,13 +61,16 @@ namespace APICondSecurity.Infra.Data.Repositories
             }
         }
 
-        public async Task<Cidade> Get(int IdCidade)
+        public async Task<Cidade> Get(int cidadeIbge)
         {
             try
             {
-#pragma warning disable CS8603 // Possível retorno de referência nula.
-                return await _context.Cidade.FirstOrDefaultAsync(c => c.IdCidade == IdCidade);
-#pragma warning restore CS8603 // Possível retorno de referência nula.
+                var cidade = await _context.Cidade.FirstOrDefaultAsync(c => c.CidadeIbge == cidadeIbge);
+                if (cidade == null)
+                {
+                    return null;
+                }
+                return cidade;
             }
             catch (Exception ex)
             {
