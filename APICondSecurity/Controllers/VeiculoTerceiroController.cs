@@ -85,6 +85,19 @@ namespace APICondSecurity.Controllers
             }
         }
 
+        [HttpGet("GetPlaca")]
+        [Authorize]
+        public async Task<ActionResult<VeiculoTerceiroRepository>> GetPlaca(string placa)
+        {
+            var veiculoTerceiro = await _veiculoTerceiroRepository.GetByPlaca(placa);
+            if (veiculoTerceiro == null)
+            {
+                return NotFound("VeiculoTerceiro Não encontrada para a Placa informada.");
+            }
+            var veiculoTerceiroDTO = _mapper.Map<VeiculoTerceiroDTO>(veiculoTerceiro);
+            return Ok(veiculoTerceiroDTO);
+        }
+
         [HttpGet("Get")]
         [Authorize]
         public async Task<ActionResult<VeiculoTerceiroRepository>> Get(int IdVeiculoTerceiro)

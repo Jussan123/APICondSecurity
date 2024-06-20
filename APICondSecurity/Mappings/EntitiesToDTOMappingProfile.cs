@@ -34,9 +34,6 @@ public class EntitiesToDTOMappingProfile : Profile
             .ForMember(dest => dest.Situacao, opt => opt.MapFrom(src => src.Situacao))
             .ForMember(dest => dest.Cpf, opt => opt.MapFrom(src => src.Cpf));*/
 
-        CreateMap<LayoutUnificadoCadastroUsuarioDTO, TipoUsuarioDTO> ()
-            .ForMember(dest => dest.Tipo, opt => opt.MapFrom(src => src.Tipo));
-
         CreateMap<LayoutUnificadoCadastroUsuarioDTO, ResidenciaDTO> ()
             .ForMember(dest => dest.Numero, opt => opt.MapFrom(src => src.Numero))
             .ForMember(dest => dest.Bloco, opt => opt.MapFrom(src => src.Bloco))

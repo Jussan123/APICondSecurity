@@ -56,6 +56,7 @@ namespace APICondSecurity.Controllers
             veiculoExiste.Cor = veiculoDTO.Cor;
             veiculoExiste.Ano = veiculoDTO.Ano;
             veiculoExiste.Situacao = veiculoDTO.Situacao;
+            veiculoExiste.IdUsuario = veiculoDTO.IdUsuario;
 
             try
             {
@@ -90,6 +91,20 @@ namespace APICondSecurity.Controllers
             }
         }
 
+        [HttpGet("GetPlaca")]
+        [Authorize]
+        public async Task<ActionResult<VeiculoRepository>> GetPlaca(string placa)
+        {
+            var veiculo = await _veiculoRepository.GetByPlaca(placa);
+            if (veiculo == null)
+            {
+                return NotFound("Veiculo não encontrada para a placa informada.");
+            }
+
+            var veiculoDTO = _mapper.Map<VeiculoDTO>(veiculo);
+            return Ok(veiculoDTO);
+        }
+
         [HttpGet("Get")]
         [Authorize]
         public async Task<ActionResult<VeiculoRepository>> Get(int IdVeiculo)
@@ -97,7 +112,7 @@ namespace APICondSecurity.Controllers
             var veiculo = await _veiculoRepository.Get(IdVeiculo);
             if (veiculo == null)
             {
-                return NotFound("Veiculo Não encontrada para o Id informado.");
+                return NotFound("Veiculo não encontrada para o id informado.");
             }
 
             var veiculoDTO = _mapper.Map<VeiculoDTO>(veiculo);
