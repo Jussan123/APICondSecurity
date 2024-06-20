@@ -106,7 +106,7 @@ namespace APICondSecurity.Controllers
             var user = await _userRepository.Get(IdUser);
             if (user == null)
             {
-                return NotFound("User Não encontrada para o Id informado.");
+                return NotFound("User não encontrada para o id informado.");
             }
             var userDTO = _mapper.Map<UserDTO>(user);
             return Ok(userDTO);

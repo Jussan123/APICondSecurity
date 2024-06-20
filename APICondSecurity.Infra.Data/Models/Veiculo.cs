@@ -46,6 +46,9 @@ public partial class Veiculo
     [Column("id_condominio")]
     public int IdCondominio { get; set; }
 
+    [Column("id_usuario")]
+    public int IdUsuario { get; set; }
+
     [ForeignKey("IdCondominio")]
     [InverseProperty("Veiculo")]
     public virtual Condominio IdCondominioNavigation { get; set; }

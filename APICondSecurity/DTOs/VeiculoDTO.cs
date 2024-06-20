@@ -26,5 +26,7 @@ namespace APICondSecurity.DTOs
         public int Ano { get; set; }
         [StringLength(2)]
         public string Situacao { get; set; }
+
+        public int IdUsuario { get; set; }
     }
 }

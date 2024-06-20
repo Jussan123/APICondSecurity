@@ -108,12 +108,6 @@ namespace APICondSecurity.Controllers
                 user.CpfHash = CpfHash;
                 user.CpfSalt = CpfSalt;
 
-                TipoUsuarioDTO tipoUsuarioDTO = new TipoUsuarioDTO()
-                {
-                    Tipo = layoutUnificadoCadastroUsuarioDTO.Tipo
-                };
-                var tipoUsuario = _mapper.Map<TipoUsuario>(tipoUsuarioDTO);
-
                 ResidenciaDTO residenciaDTO = new ResidenciaDTO()
                 {
                     Numero = layoutUnificadoCadastroUsuarioDTO.Numero,
@@ -126,7 +120,6 @@ namespace APICondSecurity.Controllers
                 var residencia = _mapper.Map<Residencia>(residenciaDTO);
 
                 _userRepository.Incluir(user);
-                _tipoUsuarioRepository.Incluir(tipoUsuario);
                 _residenciaRepository.Incluir(residencia);
 
                 await _userRepository.SaveAllAsync();
@@ -153,7 +146,8 @@ namespace APICondSecurity.Controllers
                     Modelo = layoutUnificadoCadastroVeiculoDTO.Modelo,
                     Cor = layoutUnificadoCadastroVeiculoDTO.Cor,
                     Ano = layoutUnificadoCadastroVeiculoDTO.Ano,
-                    Situacao = layoutUnificadoCadastroVeiculoDTO.Situacao
+                    Situacao = layoutUnificadoCadastroVeiculoDTO.Situacao,
+                    IdUsuario = layoutUnificadoCadastroVeiculoDTO.IdUsuario
                 };
                 var veiculo = _mapper.Map<Veiculo>(veiculoDTO);
 

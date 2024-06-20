@@ -35,8 +35,6 @@ namespace APICondSecurity.DTOs
 
         [StringLength(50)]
         public string Rua { get; set; }
-        [StringLength(20)]
-        public string Tipo { get; set; }
         public int IdTipoUsuario { get; set; }
         public int IdResidencia { get; set; }
         public int IdCondominio { get; set; }
