@@ -10,10 +10,10 @@ using Microsoft.Azure.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configuração do serviço de configuração
+// Configuraï¿½ï¿½o do serviï¿½o de configuraï¿½ï¿½o
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
-// Configuração de CORS para permitir o acesso do aplicativo React Native
+// Configuraï¿½ï¿½o de CORS para permitir o acesso do aplicativo React Native
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactNativeApp",
@@ -23,7 +23,7 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader());
 });
 
-// Adição de serviços ao contêiner
+// Adiï¿½ï¿½o de serviï¿½os ao contï¿½iner
 builder.Services.AddDbContext<condSecurityContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -37,15 +37,15 @@ builder.Services.AddHttpClient();
 var signalRConnectionString = builder.Configuration.GetConnectionString("AzureSignalR");
 builder.Services.AddSignalR().AddAzureSignalR(signalRConnectionString);
 
-// Configuração do Swagger
+// Configuraï¿½ï¿½o do Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddInfrastructureSwagger();
 
-// Configuração do AutoMapper
+// Configuraï¿½ï¿½o do AutoMapper
 builder.Services.AddAutoMapper(typeof(EntitiesToDTOMappingProfile));
 
-// Registro de serviços e repositórios no contêiner de dependências
+// Registro de serviï¿½os e repositï¿½rios no contï¿½iner de dependï¿½ncias
 builder.Services.AddScoped<IMapper, Mapper>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<UserRepository>();
@@ -69,7 +69,6 @@ builder.Services.AddSingleton<ITemporaryStorageService, TemporaryStorageService>
 
 var app = builder.Build();
 
-// Configuração do pipeline de requisições HTTP
 app.UseSwagger();
 app.UseSwaggerUI();
 
