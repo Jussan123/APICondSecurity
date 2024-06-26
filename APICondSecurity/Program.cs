@@ -6,11 +6,14 @@ using APICondSecurity.Infra.Ioc;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Azure.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configuração do serviço de configuração
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
+// Configuração de CORS para permitir o acesso do aplicativo React Native
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactNativeApp",
@@ -20,24 +23,29 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader());
 });
 
-// Add services to the container.
-
+// Adição de serviços ao contêiner
 builder.Services.AddDbContext<condSecurityContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     options.UseNpgsql(connectionString);
 });
+
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
-builder.Services.AddSignalR();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+var signalRConnectionString = builder.Configuration.GetConnectionString("AzureSignalR");
+builder.Services.AddSignalR().AddAzureSignalR(signalRConnectionString);
+
+// Configuração do Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddInfrastructureSwagger();
 
+// Configuração do AutoMapper
 builder.Services.AddAutoMapper(typeof(EntitiesToDTOMappingProfile));
-// builder.Services.AddScoped<IAuthenticate, AuthenticateService>();
+
+// Registro de serviços e repositórios no contêiner de dependências
 builder.Services.AddScoped<IMapper, Mapper>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<UserRepository>();
@@ -59,26 +67,17 @@ builder.Services.AddScoped<VeiculoUsuarioRepository>();
 builder.Services.AddScoped<VeiculoTerceiroRepository>();
 builder.Services.AddSingleton<ITemporaryStorageService, TemporaryStorageService>();
 
-
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-
-
+// Configuração do pipeline de requisições HTTP
 app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
-
 app.UseCors("AllowReactNativeApp");
-
 app.UseAuthorization();
 
 app.MapControllers();
-
 app.MapHub<NotificationHub>("/notificationHub");
 
 app.Run();
-
-
