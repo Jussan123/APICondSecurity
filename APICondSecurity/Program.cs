@@ -17,11 +17,11 @@ builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactNativeApp",
-        builder => builder
-            .WithOrigins("http://localhost:8081/", "https://czyhr5k-jussan-8081.exp.direct/", "https://condsecuritysignalr.service.signalr.net")
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials());
+    builder => builder
+        .WithOrigins("http://localhost:8082","http://localhost:8081", "https://czyhr5k-jussan-8081.exp.direct", "https://condsecuritysignalr.service.signalr.net")
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials());
 });
 
 // Adi��o de servi�os ao cont�iner
