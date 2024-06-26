@@ -18,9 +18,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactNativeApp",
         builder => builder
-            .AllowAnyOrigin()
+            .WithOrigins("http://localhost:8081/", "https://czyhr5k-jussan-8081.exp.direct/", "https://condsecuritysignalr.service.signalr.net")
             .AllowAnyMethod()
-            .AllowAnyHeader());
+            .AllowAnyHeader()
+            .AllowCredentials());
 });
 
 // Adição de serviços ao contêiner
