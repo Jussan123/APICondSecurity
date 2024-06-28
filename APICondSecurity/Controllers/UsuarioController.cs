@@ -65,10 +65,11 @@ namespace APICondSecurity.Controllers
             userExiste.Email = userDTO.Email;
             userExiste.Situacao = userDTO.Situacao;
             userExiste.IdTipoUsuario = userDTO.IdTipoUsuario;
+            userExiste.Cpf = userDTO.Cpf;
 
             try
             {
-                _userRepository.Alterar(userExiste);
+                await _userRepository.Alterar(userExiste);
                 await _userRepository.SaveAllAsync();
                 return Ok("User alterada com sucesso");
             }

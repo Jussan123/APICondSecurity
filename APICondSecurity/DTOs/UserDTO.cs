@@ -14,5 +14,7 @@ namespace APICondSecurity.DTOs
         public string Telefone { get; set; }
         public string Situacao { get; set; }
         public int IdTipoUsuario { get; set; }
+        public bool TermoAceite { get; set; }
+
     }
 }

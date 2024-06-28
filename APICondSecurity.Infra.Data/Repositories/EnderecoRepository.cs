@@ -33,12 +33,13 @@ namespace APICondSecurity.Infra.Data.Repositories
             }
         }
 
-        public void Incluir(Endereco endereco)
+        public int Incluir(Endereco endereco)
         {
             try
             {
                 _context.Endereco.Add(endereco);
                 _context.SaveChanges();
+                return endereco.IdEndereco;
             }
             catch (Exception ex)
             {

@@ -3,6 +3,7 @@ using System;
 using APICondSecurity.Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace APICondSecurity.Migrations
 {
     [DbContext(typeof(condSecurityContext))]
-    partial class condSecurityContextModelSnapshot : ModelSnapshot
+    [Migration("20240628153218_Termo")]
+    partial class Termo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -453,10 +456,6 @@ namespace APICondSecurity.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_user"));
 
-                    b.Property<string>("Cpf")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<byte[]>("CpfHash")
                         .IsRequired()
                         .HasColumnType("bytea");
@@ -492,7 +491,7 @@ namespace APICondSecurity.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("TermoAceite")
+                    b.Property<bool>("termoAceite")
                         .HasColumnType("boolean");
 
                     b.HasKey("Id_user")

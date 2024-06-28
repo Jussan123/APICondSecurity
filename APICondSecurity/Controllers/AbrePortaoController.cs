@@ -11,6 +11,8 @@ using System.Text;
 using System.Net.Http;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.SignalR;
+using Npgsql.Internal;
+using Azure.Core;
 
 namespace APICondSecurity.Controllers
 {
@@ -126,10 +128,42 @@ namespace APICondSecurity.Controllers
 
                 if (veiculo != null && rfidUse != null)
                 {
-                    var esp32Url = "http://localhost/control"; // Substitua pelo IP do ESP32
-                    //var command = new { angle = 90 }; // Ajuste o ângulo conforme necessário
-                    var command = true;
-                    //var response = await _httpClient.PostAsJsonAsync(esp32Url, command);
+                    try
+                    {
+                        // Verificação de RFID e outros dados necessários
+
+                        // Configuração do URL do ESP32 (substitua pelo seu IP público e porta)
+                        var esp32Url = "http://192.168.1.10:80/control";
+
+                        // Comando a ser enviado ao ESP32 (no seu caso, um booleano)
+                        // var command = new CommandModel
+                        // {
+                        //     Command = true
+                        // };
+
+                        var request = new HttpRequestMessage(HttpMethod.Post, esp32Url);
+                        var content = new StringContent("{\"command\":true}", null, "application/json");
+                        request.Content = content;
+
+                        var response = await _httpClient.SendAsync(request);
+
+                        // Tratamento da resposta do ESP32
+                        if (response.IsSuccessStatusCode)
+                        {
+                            // Lógica adicional após o sucesso da requisição ao ESP32
+                            return Ok("Comando enviado com sucesso para o ESP32");
+                        }
+                        else
+                        {
+                            // Tratamento de erro caso a requisição não tenha sido bem-sucedida
+                            return StatusCode((int)response.StatusCode, "Erro ao enviar comando para o ESP32");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // Captura de exceções que possam ocorrer durante o processamento da requisição
+                        return BadRequest($"Ocorreu um erro ao enviar comando para o ESP32: {ex.Message}");
+                    }
 
                     var portao = await _portaoRepository.Get(layoutUnificadoPlacaRfidDTO.IdPortao);
 
@@ -169,16 +203,8 @@ namespace APICondSecurity.Controllers
                         _registrosRepository.Incluir(registros);
                         await _registrosRepository.SaveAllAsync();
                     }
-
-                    //if (response.IsSuccessStatusCode)
-                    if (command == true)
-                    {
-                        return Ok("Veículo Encontrado e Portão Aberto!");
-                    }
-                    else
-                    {
-                        return BadRequest("entrou no if do command");// StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
-                    }
+                    
+                    return Ok("Veículo Encontrado e Portão Aberto!");
                 }
 
                 return BadRequest("Veículo ou RFID não encontrado.");
@@ -230,10 +256,10 @@ namespace APICondSecurity.Controllers
 
                 if (veiculo != null)
                 {
-                    var esp32Url = "http://localhost/control"; // Substitua pelo IP do ESP32
+                    var esp32Url = "http://192.168.248.169/control"; // Substitua pelo IP do ESP32
                     //var command = new { angle = 90 }; // Ajuste o ângulo conforme necessário
                     var command = true;
-                    //var response = await _httpClient.PostAsJsonAsync(esp32Url, command);
+                    var response = await _httpClient.PostAsJsonAsync(esp32Url, command);
 
                     var portao = await _portaoRepository.Get(layoutUnificadoPlacaTerceiroDTO.IdPortao);
 

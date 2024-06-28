@@ -187,12 +187,7 @@ namespace APICondSecurity.Controllers
         {
             try
             {
-                CondominioDTO condominioDTO = new CondominioDTO()
-                {
-                    Nome = layoutUnificadoCadastroCondominoDTO.Nome,
-                    Situacao = layoutUnificadoCadastroCondominoDTO.Situacao
-                };
-                var condominio = _mapper.Map<Condominio>(condominioDTO);
+                
 
                 EnderecoDTO enderecoDTO = new EnderecoDTO()
                 {
@@ -203,6 +198,18 @@ namespace APICondSecurity.Controllers
                     Complemento = layoutUnificadoCadastroCondominoDTO.Complemento
                 };
                 var endereco = _mapper.Map<Endereco>(enderecoDTO);
+                _enderecoRepository.Incluir(endereco);
+                
+
+                var enderecoId = await _enderecoRepository.Get(endereco.IdEndereco);
+
+                CondominioDTO condominioDTO = new CondominioDTO()
+                {
+                    Nome = layoutUnificadoCadastroCondominoDTO.Nome,
+                    Situacao = layoutUnificadoCadastroCondominoDTO.Situacao,
+                    IdEndereco = enderecoId.IdEndereco
+                };
+                var condominio = _mapper.Map<Condominio>(condominioDTO);
 
                 CidadeDTO cidadeDTO = new CidadeDTO()
                 {
@@ -219,7 +226,7 @@ namespace APICondSecurity.Controllers
                 var uf = _mapper.Map<Uf>(ufDTO);
 
                 _condominioRepository.Incluir(condominio);
-                _enderecoRepository.Incluir(endereco);
+                
                 _cidadeRepository.Incluir(cidade);
                 _ufRepository.Incluir(uf);
 

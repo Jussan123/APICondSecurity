@@ -11,7 +11,7 @@ namespace APICondSecurity.Controllers
     [Route("api/[controller]")]
     public class CidadeController(CidadeRepository cidadeRepository, IMapper mapper) : Controller
     {
-        private readonly CidadeRepository _cidadeRepository;
+        private readonly CidadeRepository _cidadeRepository = cidadeRepository;
         private readonly IMapper _mapper = mapper;
 
         [HttpPost("Cadastrar")]
@@ -20,7 +20,8 @@ namespace APICondSecurity.Controllers
         {
             
 
-
+            try
+            { 
             var cidadeIBGEExiste = await _cidadeRepository.Get(cidadeDTO.CidadeIbge);
             if (cidadeIBGEExiste != null)
             {
@@ -28,8 +29,6 @@ namespace APICondSecurity.Controllers
             }
             var cidade = _mapper.Map<Cidade>(cidadeDTO);
             _cidadeRepository.Incluir(cidade);
-            try
-            {
                 await _cidadeRepository.SaveAllAsync();
                 return Ok("Cidade cadastrada com sucesso!");
             }
@@ -47,7 +46,7 @@ namespace APICondSecurity.Controllers
             {
                 return BadRequest("Não é possível alterar a cidade. É necessário informar o ID.");
             }
-            var cidadeExiste = await _cidadeRepository.Get(cidadeDTO.IdCidade);
+            var cidadeExiste = await _cidadeRepository.GetId(cidadeDTO.IdCidade);
 
             if (cidadeExiste == null)
             {
@@ -78,7 +77,7 @@ namespace APICondSecurity.Controllers
         [Authorize]
         public async Task<ActionResult> Delete(int IdCidade)
         {
-            var cidade = _cidadeRepository.Get(IdCidade);
+            var cidade = _cidadeRepository.GetId(IdCidade);
             if (cidade == null)
 
             {
@@ -100,7 +99,7 @@ namespace APICondSecurity.Controllers
         [Authorize]
         public async Task<ActionResult<CidadeRepository>> Get(int IdCidade)
         {
-            var cidade = await _cidadeRepository.Get(IdCidade);
+            var cidade = await _cidadeRepository.GetId(IdCidade);
             if (cidade == null)
             {
                 return NotFound("Cidade Não encontrada para o Id informado.");
@@ -113,7 +112,9 @@ namespace APICondSecurity.Controllers
         [Authorize]
         public async Task<ActionResult<IEnumerable<CidadeRepository>>> GetCidade()
         {
-            return Ok(await _cidadeRepository.GetAll());
+            var cidade = await _cidadeRepository.GetAll();
+            var cidadeDTO = _mapper.Map<IEnumerable<CidadeDTO>>(cidade);
+            return Ok(cidadeDTO);
         }
     }
 }
