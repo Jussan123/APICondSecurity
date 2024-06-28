@@ -11,9 +11,11 @@ namespace APICondSecurity.Infra.Data.Models
         public byte[] SenhaSalt { get; set; }
         public byte[] CpfHash { get; set; }
         public byte[] CpfSalt { get; set; }
+        public string Cpf { get; set; }
         public string Telefone { get; set; }
         public string Situacao { get; set; }
         public int IdTipoUsuario { get; set; }
+        public bool TermoAceite { get; set; } = false;
 
         public User() { }
    

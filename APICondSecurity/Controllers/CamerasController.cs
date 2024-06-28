@@ -16,6 +16,7 @@ namespace APICondSecurity.Controllers
         private readonly IMapper _mapper = mapper;
 
         [HttpPost("Cadastrar")]
+        [Authorize]
         public async Task<ActionResult> CadastrarCamera(CamerasDTO cameraDTO)
         {
             var camera = _mapper.Map<Cameras>(cameraDTO);

@@ -7,6 +7,8 @@ using APICondSecurity.Infra.Data.Repositories;
 using AutoMapper;
 using System.Text;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Authorization;
+using APICondSecurity.Infra.Data.Context;
 
 namespace APICondSecurity.Controllers
 {
@@ -50,6 +52,7 @@ namespace APICondSecurity.Controllers
                 user.AlterarSenha(SenhaHash, SenhaSalt);
                 user.CpfHash = CpfHash;
                 user.CpfSalt = CpfSalt;
+                user.Cpf = userDTO.Cpf;
             }
             
 
@@ -64,6 +67,32 @@ namespace APICondSecurity.Controllers
             {
                 Token = token
             };
+        }
+
+        [Authorize]
+        [HttpPost("AceiteTermos")]
+        public async Task<ActionResult> AceiteTermos(UserTermoAceiteDto input)
+        {
+            if (input == null)
+                return BadRequest("Dados inválidos.");
+            
+            var user = await _userService.Get(input.IdUser);
+
+            if (user == null)
+                return BadRequest("Usuário não encontrado.");
+            
+            user.TermoAceite = true;
+
+            try
+            {
+                await _userService.Alterar(user);
+                await _userService.SaveAllAsync();
+
+                return Ok("Termo aceito com sucesso.");
+            } catch (Exception ex)
+            {
+                return BadRequest("Erro ao salvar alterações.\n"+ ex.Message);
+            }
         }
 
         [HttpPost("loginApp")]
@@ -92,9 +121,12 @@ namespace APICondSecurity.Controllers
             return new UserToken
             {
                 Token = token,
-                UserId = user.Id_user
+                UserId = user.Id_user,
+                TermoAceite = user.TermoAceite,
+                Cpf = user.Cpf,
+                Name = user.Name,
+                CondominioName = "Bela Vista do Mar"
             };
         }
-        
     }
 }

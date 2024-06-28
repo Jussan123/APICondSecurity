@@ -80,6 +80,25 @@ namespace APICondSecurity.Infra.Data.Repositories
             }
         }
 
+        public async Task<Cidade> GetId(int idCidade)
+        {
+            try
+            {
+                var cidade = await _context.Cidade.FirstOrDefaultAsync(c => c.IdCidade == idCidade);
+                if (cidade == null)
+                {
+                    return null;
+                }
+                return cidade;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine($"Erro ao buscar cidade: {ex.Message}");
+                throw;
+            }
+        }
+
         public async Task<Cidade> GetByIBGE(int CidadeIbge)
         {
             try

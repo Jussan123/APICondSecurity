@@ -14,10 +14,11 @@ namespace APICondSecurity.Controllers
         private readonly VeiculoUsuarioRepository _veiculoUsuarioRepository;
         private readonly RfidRepository _rfidRepository;
         private readonly IMapper _mapper;
-        public VeiculoUsuarioController(VeiculoUsuarioRepository veiculoUsuarioRepository, IMapper mapper)
+        public VeiculoUsuarioController(VeiculoUsuarioRepository veiculoUsuarioRepository, IMapper mapper, RfidRepository rfidRepository)
         {
             _mapper = mapper;
             _veiculoUsuarioRepository = veiculoUsuarioRepository;
+            _rfidRepository = rfidRepository;
         }
 
         [HttpPost("Cadastrar")]

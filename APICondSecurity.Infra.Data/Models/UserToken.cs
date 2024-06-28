@@ -11,5 +11,14 @@ namespace APICondSecurity.Infra.Data.Models
         public string Token { get; set; }
         public int UserId { get; set; }
 
+        public bool TermoAceite { get; set; }
+
+        public string Cpf { get; set; }
+
+        public string Name { get; set; }
+        public string CondominioName { get; set; }
+
+        
+
     }
 }
