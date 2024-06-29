@@ -133,7 +133,8 @@ namespace APICondSecurity.Controllers
                         // Verificação de RFID e outros dados necessários
 
                         // Configuração do URL do ESP32 (substitua pelo seu IP público e porta)
-                        var esp32Url = "http://192.168.1.10:80/control";
+                        //var esp32Url = "http://192.168.1.10:80/control";
+                        var esp32Url = "http://10.10.134.239:80/control"; 
 
                         // Comando a ser enviado ao ESP32 (no seu caso, um booleano)
                         // var command = new CommandModel
