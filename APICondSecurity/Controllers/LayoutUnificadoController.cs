@@ -151,12 +151,6 @@ namespace APICondSecurity.Controllers
                 };
                 var veiculo = _mapper.Map<Veiculo>(veiculoDTO);
 
-                VeiculoTerceiroDTO veiculoTerceiroDTO = new VeiculoTerceiroDTO()
-                {
-                    Placa = layoutUnificadoCadastroVeiculoDTO.Placa,
-                    IdUsuario = layoutUnificadoCadastroVeiculoDTO.IdUsuario
-                };
-                var veiculoTerceiro = _mapper.Map<VeiculoTerceiro>(veiculoTerceiroDTO);
 
                 VeiculoUsuarioDTO veiculoUsuarioDTO = new VeiculoUsuarioDTO()
                 {
@@ -167,12 +161,31 @@ namespace APICondSecurity.Controllers
                 var veiculoUsuario = _mapper.Map<VeiculoUsuario>(veiculoUsuarioDTO);
 
                 _veiculoRepository.Incluir(veiculo);
-                _veiculoTerceiroRepository.Incluir(veiculoTerceiro);
-                _veiculoUsuarioRepository.Incluir(veiculoUsuario);
+                if (veiculoUsuario != null)
+                {
+                    _veiculoUsuarioRepository.Incluir(veiculoUsuario);
+                    await _veiculoUsuarioRepository.SaveAllAsync();
+                    string PlacaTerceiro = null;
+                } else
+                {
+                    string PlacaTerceiro = layoutUnificadoCadastroVeiculoDTO.Placa;
+
+
+                VeiculoTerceiroDTO veiculoTerceiroDTO = new VeiculoTerceiroDTO()
+                {
+                    Placa = PlacaTerceiro,
+                    IdUsuario = layoutUnificadoCadastroVeiculoDTO.IdUsuario
+                };
+                var veiculoTerceiro = _mapper.Map<VeiculoTerceiro>(veiculoTerceiroDTO);
+
+                if (veiculoTerceiro != null)
+                {
+                    _veiculoTerceiroRepository.Incluir(veiculoTerceiro);
+                    await _veiculoTerceiroRepository.SaveAllAsync();
+                }
+                }
 
                 await _veiculoRepository.SaveAllAsync();
-                await _veiculoTerceiroRepository.SaveAllAsync();
-                await _veiculoUsuarioRepository.SaveAllAsync();
                 return Ok("Veículo cadastrado com sucesso!");
             }
             catch (Exception ex)
