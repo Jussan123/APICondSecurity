@@ -110,16 +110,17 @@ namespace APICondSecurity.Controllers
                 var veiculo = _mapper.Map<Veiculo>(veiculoDTO);
                 await _veiculoRepository.GetByPlaca(veiculoDTO.Placa);
 
+                var veiculoAtivo = await _veiculoRepository.GetByPlaca(veiculoDTO.Placa);
                 var veiculoUser = await _veiculoUsuarioRepository.GetByPlaca(veiculoDTO.Placa);
 
                 RfidDTO rfidDTO = new RfidDTO()
                 {
-                    Numero = layoutUnificadoPlacaRfidDTO.Numero
+                    Numero = rfid
                 };
                 var rfidUse = _mapper.Map<Rfid>(rfidDTO);
                 await _rfidRepository.GetByTag(rfidDTO.Numero);
 
-                if (veiculoDTO.Situacao == "I")
+                if (veiculoAtivo.Situacao != "A")
                 {
                     await _hubContext.Clients.All.SendAsync("ReceiveNotification", "Veiculo Não autorizado placa:", layoutUnificadoPlacaRfidDTO.Placa);
 
@@ -133,8 +134,8 @@ namespace APICondSecurity.Controllers
                         // Verificação de RFID e outros dados necessários
 
                         // Configuração do URL do ESP32 (substitua pelo seu IP público e porta)
-                        //var esp32Url = "http://192.168.1.10:80/control";
-                        var esp32Url = "http://10.10.134.239:80/control"; 
+                        //var esp32Url = "http://192.168.1.10:80/control"; // IP de casa
+                        var esp32Url = "http://10.10.134.239:80/control"; // IP Senac 
 
                         // Comando a ser enviado ao ESP32 (no seu caso, um booleano)
                         // var command = new CommandModel
@@ -234,6 +235,12 @@ namespace APICondSecurity.Controllers
                 };
                 var veiculo = _mapper.Map<Veiculo>(veiculoDTO);
                 await _veiculoRepository.GetByPlaca(veiculoDTO.Placa);
+                var veiculoAtivo = await _veiculoRepository.GetByPlaca(veiculoDTO.Placa);
+                
+                if (veiculoAtivo.Situacao != "A")
+                {
+                    return BadRequest("Veículo não autorizado.");
+                }
 
                 PermissaoDTO permissaoDTO = new PermissaoDTO()
                 {
@@ -257,8 +264,8 @@ namespace APICondSecurity.Controllers
 
                 if (veiculo != null)
                 {
-                    var esp32Url = "http://192.168.248.169/control"; // Substitua pelo IP do ESP32
-                    //var command = new { angle = 90 }; // Ajuste o ângulo conforme necessário
+                    //var esp32Url = "http://192.168.1.10:80/control"; // IP de casa
+                    var esp32Url = "http://10.10.134.239:80/control"; // IP Senac 
                     var command = true;
                     var response = await _httpClient.PostAsJsonAsync(esp32Url, command);
 

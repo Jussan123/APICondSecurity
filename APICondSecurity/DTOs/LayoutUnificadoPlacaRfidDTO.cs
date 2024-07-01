@@ -8,8 +8,7 @@ namespace APICondSecurity.DTOs
         [StringLength(255)]
         public string Placa { get; set; }
         
-        [StringLength(20)]
-        public string Numero { get; set; }
+        //public string Numero { get; set; }
 
         public int IdPortao { get; set; }
 
